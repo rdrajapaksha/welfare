@@ -1,0 +1,594 @@
+// Heart Link Allianz Welfare Association
+// Database schema. SQLite for local development; switch `provider` to
+// "postgresql" and update DATABASE_URL for production deployments.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Authentication & people
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("MEMBER") // MEMBER | ADMIN | EDITOR
+  name         String
+  locale       String   @default("en")
+  isActive     Boolean  @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  member         Member?
+  ticketMessages TicketMessage[]
+
+  @@index([role])
+}
+
+model Member {
+  id               String    @id @default(cuid())
+  membershipNo     String    @unique
+  fullName         String
+  nameWithInitials String
+  nic              String    @unique
+  dateOfBirth      DateTime
+  gender           String // MALE | FEMALE | OTHER
+  civilStatus      String    @default("SINGLE")
+  occupation       String?
+  addressLine1     String
+  addressLine2     String?
+  city             String
+  district         String
+  phone            String
+  whatsapp         String?
+  email            String?
+  bloodGroup       String?
+  photoUrl         String?
+  membershipType   String    @default("ORDINARY") // ORDINARY | LIFE | HONORARY | JUNIOR
+  status           String    @default("ACTIVE") // ACTIVE | PENDING | SUSPENDED | RESIGNED
+  joinedAt         DateTime  @default(now())
+  emergencyName    String?
+  emergencyPhone   String?
+  bio              String?
+  showInDirectory  Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  donations          Donation[]
+  payments           Payment[]
+  benefitClaims      BenefitClaim[]
+  tickets            SupportTicket[]
+  eventRegistrations EventRegistration[]
+
+  @@index([status])
+  @@index([district])
+  @@index([membershipType])
+}
+
+model CommitteeMember {
+  id         String  @id @default(cuid())
+  name       String
+  positionEn String
+  positionSi String
+  positionTa String
+  bioEn      String?
+  bioSi      String?
+  bioTa      String?
+  photoUrl   String?
+  email      String?
+  phone      String?
+  termFrom   Int
+  termTo     Int?
+  sortOrder  Int     @default(0)
+  isCurrent  Boolean @default(true)
+
+  @@index([isCurrent, sortOrder])
+}
+
+// ---------------------------------------------------------------------------
+// Services / welfare programmes & community projects
+// ---------------------------------------------------------------------------
+
+model Programme {
+  id            String  @id @default(cuid())
+  slug          String  @unique
+  category      String // WELFARE | EMERGENCY | MEMBER_SUPPORT | COMMUNITY
+  titleEn       String
+  titleSi       String
+  titleTa       String
+  summaryEn     String
+  summarySi     String
+  summaryTa     String
+  bodyEn        String
+  bodySi        String
+  bodyTa        String
+  icon          String  @default("HeartHandshake")
+  coverImage    String?
+  benefitAmount Int?
+  eligibilityEn String?
+  eligibilitySi String?
+  eligibilityTa String?
+  isActive      Boolean @default(true)
+  sortOrder     Int     @default(0)
+
+  benefitClaims BenefitClaim[]
+
+  @@index([category, isActive])
+}
+
+model Project {
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  titleEn       String
+  titleSi       String
+  titleTa       String
+  summaryEn     String
+  summarySi     String
+  summaryTa     String
+  bodyEn        String
+  bodySi        String
+  bodyTa        String
+  location      String
+  targetAmount  Int
+  raisedAmount  Int       @default(0)
+  spentAmount   Int       @default(0)
+  beneficiaries Int       @default(0)
+  status        String    @default("ONGOING") // PLANNED | ONGOING | COMPLETED
+  startedAt     DateTime
+  completedAt   DateTime?
+  coverImage    String?
+
+  allocations FundAllocation[]
+
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// News, events & gallery
+// ---------------------------------------------------------------------------
+
+model NewsPost {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  category    String    @default("NEWS") // NEWS | ACTIVITY_REPORT | PRESS
+  titleEn     String
+  titleSi     String
+  titleTa     String
+  excerptEn   String
+  excerptSi   String
+  excerptTa   String
+  bodyEn      String
+  bodySi      String
+  bodyTa      String
+  coverImage  String?
+  author      String    @default("Media Unit")
+  tags        String    @default("")
+  isFeatured  Boolean   @default(false)
+  isPublished Boolean   @default(true)
+  views       Int       @default(0)
+  publishedAt DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isPublished, publishedAt])
+  @@index([category])
+}
+
+model Event {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  titleEn           String
+  titleSi           String
+  titleTa           String
+  summaryEn         String
+  summarySi         String
+  summaryTa         String
+  bodyEn            String
+  bodySi            String
+  bodyTa            String
+  venue             String
+  city              String
+  startsAt          DateTime
+  endsAt            DateTime?
+  coverImage        String?
+  capacity          Int?
+  registrationOpen  Boolean  @default(true)
+  isPublished       Boolean  @default(true)
+  attendeeCount     Int      @default(0)
+
+  registrations EventRegistration[]
+
+  @@index([startsAt])
+}
+
+model EventRegistration {
+  id        String   @id @default(cuid())
+  eventId   String
+  memberId  String?
+  fullName  String
+  email     String
+  phone     String
+  guests    Int      @default(0)
+  note      String?
+  status    String   @default("CONFIRMED") // CONFIRMED | CANCELLED | WAITLIST
+  createdAt DateTime @default(now())
+
+  event  Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  member Member? @relation(fields: [memberId], references: [id], onDelete: SetNull)
+
+  @@index([eventId])
+}
+
+model GalleryAlbum {
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  category   String   @default("EVENT") // EVENT | COMMUNITY | HIGHLIGHT
+  titleEn    String
+  titleSi    String
+  titleTa    String
+  captionEn  String?
+  captionSi  String?
+  captionTa  String?
+  coverImage String
+  takenAt    DateTime
+  isPublished Boolean @default(true)
+
+  items GalleryItem[]
+
+  @@index([category, takenAt])
+}
+
+model GalleryItem {
+  id        String  @id @default(cuid())
+  albumId   String
+  type      String  @default("PHOTO") // PHOTO | VIDEO
+  url       String
+  thumbnail String?
+  captionEn String?
+  captionSi String?
+  captionTa String?
+  width     Int     @default(1600)
+  height    Int     @default(1067)
+  sortOrder Int     @default(0)
+
+  album GalleryAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+
+  @@index([albumId, sortOrder])
+}
+
+// ---------------------------------------------------------------------------
+// Donations, payments & financial transparency
+// ---------------------------------------------------------------------------
+
+model Donation {
+  id          String    @id @default(cuid())
+  reference   String    @unique
+  donorName   String
+  email       String?
+  phone       String?
+  amount      Int
+  currency    String    @default("LKR")
+  method      String    @default("BANK_TRANSFER") // BANK_TRANSFER | ONLINE_CARD | CASH | CHEQUE
+  purpose     String    @default("GENERAL") // GENERAL | EMERGENCY | EDUCATION | MEDICAL | PROJECT
+  message     String?
+  isAnonymous Boolean   @default(false)
+  isRecurring Boolean   @default(false)
+  status      String    @default("PENDING") // PENDING | CONFIRMED | FAILED | REFUNDED
+  memberId    String?
+  receiptUrl  String?
+  createdAt   DateTime  @default(now())
+  confirmedAt DateTime?
+
+  member Member? @relation(fields: [memberId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([purpose])
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  receiptNo String   @unique
+  memberId  String
+  amount    Int
+  type      String   @default("MEMBERSHIP_FEE") // MEMBERSHIP_FEE | REGISTRATION | LEVY | FINE
+  periodYear  Int
+  periodMonth Int?
+  method    String   @default("BANK_TRANSFER")
+  status    String   @default("PAID") // PAID | PENDING | OVERDUE
+  paidAt    DateTime @default(now())
+  note      String?
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId, periodYear])
+  @@index([status])
+}
+
+model AnnualReport {
+  id               String   @id @default(cuid())
+  year             Int      @unique
+  titleEn          String
+  titleSi          String
+  titleTa          String
+  summaryEn        String
+  summarySi        String
+  summaryTa        String
+  fileUrl          String
+  fileSizeKb       Int      @default(0)
+  auditedBy        String?
+  totalIncome      Int
+  totalExpenditure Int
+  welfareSpend     Int      @default(0)
+  projectSpend     Int      @default(0)
+  adminSpend       Int      @default(0)
+  reserveBalance   Int      @default(0)
+  membersAtYearEnd Int      @default(0)
+  isPublished      Boolean  @default(true)
+  publishedAt      DateTime @default(now())
+}
+
+model FundAllocation {
+  id            String   @id @default(cuid())
+  projectId     String?
+  titleEn       String
+  titleSi       String
+  titleTa       String
+  descriptionEn String
+  descriptionSi String
+  descriptionTa String
+  amount        Int
+  category      String // WELFARE | EMERGENCY | EDUCATION | MEDICAL | INFRASTRUCTURE | ADMIN
+  spentAt       DateTime
+  proofUrl      String?
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([spentAt])
+  @@index([category])
+}
+
+model MonthlyStat {
+  id            String @id @default(cuid())
+  year          Int
+  month         Int
+  donationTotal Int    @default(0)
+  donationCount Int    @default(0)
+  newMembers    Int    @default(0)
+  welfarePaid   Int    @default(0)
+  claimsCount   Int    @default(0)
+  eventsHeld    Int    @default(0)
+  volunteers    Int    @default(0)
+
+  @@unique([year, month])
+}
+
+model Partner {
+  id            String  @id @default(cuid())
+  name          String
+  slug          String  @unique
+  logoUrl       String
+  website       String?
+  tier          String  @default("PARTNER") // PLATINUM | GOLD | SILVER | PARTNER | GOVERNMENT
+  descriptionEn String?
+  descriptionSi String?
+  descriptionTa String?
+  since         Int?
+  sortOrder     Int     @default(0)
+  isActive      Boolean @default(true)
+
+  @@index([tier, sortOrder])
+}
+
+// ---------------------------------------------------------------------------
+// Welfare benefits & member services
+// ---------------------------------------------------------------------------
+
+model BenefitClaim {
+  id          String    @id @default(cuid())
+  claimNo     String    @unique
+  memberId    String
+  programmeId String
+  amount      Int
+  reason      String
+  status      String    @default("SUBMITTED") // SUBMITTED | UNDER_REVIEW | APPROVED | PAID | REJECTED
+  documentUrl String?
+  reviewNote  String?
+  submittedAt DateTime  @default(now())
+  decidedAt   DateTime?
+  paidAt      DateTime?
+
+  member    Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  programme Programme @relation(fields: [programmeId], references: [id], onDelete: Restrict)
+
+  @@index([memberId, status])
+}
+
+model SupportTicket {
+  id          String    @id @default(cuid())
+  ticketNo    String    @unique
+  memberId    String?
+  contactName String
+  email       String
+  phone       String?
+  category    String // WELFARE_CLAIM | PAYMENT | PROFILE | GRIEVANCE | EVENT | TECHNICAL | OTHER
+  subject     String
+  description String
+  priority    String    @default("MEDIUM") // LOW | MEDIUM | HIGH | URGENT
+  status      String    @default("OPEN") // OPEN | IN_PROGRESS | AWAITING_MEMBER | RESOLVED | CLOSED
+  assignedTo  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  resolvedAt  DateTime?
+
+  member   Member?         @relation(fields: [memberId], references: [id], onDelete: SetNull)
+  messages TicketMessage[]
+
+  @@index([status, priority])
+  @@index([memberId])
+}
+
+model TicketMessage {
+  id         String   @id @default(cuid())
+  ticketId   String
+  authorId   String?
+  authorName String
+  authorRole String   @default("MEMBER") // MEMBER | ADMIN
+  body       String
+  isInternal Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author User?         @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([ticketId, createdAt])
+}
+
+model Document {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  category      String // APPLICATION_FORM | CONSTITUTION | POLICY | FINANCIAL | GUIDE | CIRCULAR
+  titleEn       String
+  titleSi       String
+  titleTa       String
+  descriptionEn String
+  descriptionSi String
+  descriptionTa String
+  fileUrl       String
+  fileType      String   @default("PDF")
+  fileSizeKb    Int      @default(0)
+  version       String   @default("1.0")
+  membersOnly   Boolean  @default(false)
+  downloadCount Int      @default(0)
+  isPublished   Boolean  @default(true)
+  updatedAt     DateTime @updatedAt
+  publishedAt   DateTime @default(now())
+
+  @@index([category, isPublished])
+}
+
+model Announcement {
+  id          String    @id @default(cuid())
+  titleEn     String
+  titleSi     String
+  titleTa     String
+  bodyEn      String
+  bodySi      String
+  bodyTa      String
+  audience    String    @default("ALL") // ALL | MEMBERS | COMMITTEE
+  priority    String    @default("NORMAL") // NORMAL | IMPORTANT | URGENT
+  isPinned    Boolean   @default(false)
+  isPublished Boolean   @default(true)
+  publishedAt DateTime  @default(now())
+  expiresAt   DateTime?
+
+  @@index([audience, publishedAt])
+}
+
+// ---------------------------------------------------------------------------
+// Applications, enquiries & site content
+// ---------------------------------------------------------------------------
+
+model MembershipApplication {
+  id             String    @id @default(cuid())
+  applicationNo  String    @unique
+  fullName       String
+  nic            String
+  dateOfBirth    DateTime
+  gender         String
+  occupation     String?
+  addressLine1   String
+  city           String
+  district       String
+  phone          String
+  email          String
+  membershipType String    @default("ORDINARY")
+  referredBy     String?
+  motivation     String?
+  status         String    @default("PENDING") // PENDING | UNDER_REVIEW | APPROVED | REJECTED
+  reviewNote     String?
+  createdAt      DateTime  @default(now())
+  decidedAt      DateTime?
+
+  @@index([status, createdAt])
+}
+
+model VolunteerApplication {
+  id           String    @id @default(cuid())
+  reference    String    @unique
+  fullName     String
+  email        String
+  phone        String
+  nic          String?
+  city         String
+  district     String
+  dateOfBirth  DateTime?
+  interests    String // comma separated area keys
+  skills       String?
+  availability String // WEEKENDS | WEEKDAYS | EVENINGS | FLEXIBLE
+  hoursPerMonth Int      @default(8)
+  experience   String?
+  motivation   String?
+  status       String    @default("NEW") // NEW | CONTACTED | ACTIVE | INACTIVE | DECLINED
+  createdAt    DateTime  @default(now())
+  reviewedAt   DateTime?
+
+  @@index([status, createdAt])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  topic     String   @default("GENERAL")
+  status    String   @default("NEW") // NEW | READ | REPLIED | ARCHIVED
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
+}
+
+model Faq {
+  id         String  @id @default(cuid())
+  category   String  @default("MEMBERSHIP") // MEMBERSHIP | DONATIONS | WELFARE | VOLUNTEER | GENERAL
+  questionEn String
+  questionSi String
+  questionTa String
+  answerEn   String
+  answerSi   String
+  answerTa   String
+  sortOrder  Int     @default(0)
+  isPublished Boolean @default(true)
+
+  @@index([category, sortOrder])
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  valueEn   String
+  valueSi   String
+  valueTa   String
+  group     String   @default("general")
+  updatedAt DateTime @updatedAt
+}
+
+model Subscriber {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  locale       String    @default("en")
+  isConfirmed  Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  unsubscribedAt DateTime?
+}

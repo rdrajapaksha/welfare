@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-label="Abstract cover artwork">
+  <defs>
+    <linearGradient id="g" gradientTransform="rotate(56)">
+      <stop offset="0%" stop-color="#12274a"/>
+      <stop offset="55%" stop-color="#9a143a"/>
+      <stop offset="100%" stop-color="#486ba3"/>
+    </linearGradient>
+    <filter id="b" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="72"/>
+    </filter>
+    <pattern id="dots" width="34" height="34" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.6" fill="#ffffff" opacity="0.16"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#g)"/>
+  <g filter="url(#b)"><circle cx="11" cy="292" r="673" fill="#9a143a" opacity="0.39" /><circle cx="1563" cy="761" r="212" fill="#486ba3" opacity="0.50" /><circle cx="315" cy="212" r="381" fill="#ebc766" opacity="0.51" /><circle cx="1020" cy="329" r="300" fill="#12274a" opacity="0.43" /><circle cx="1040" cy="962" r="523" fill="#9a143a" opacity="0.46" /></g>
+  <circle cx="1483" cy="765" r="358" fill="none" stroke="#ebc766" stroke-opacity="0.25" stroke-width="3.1" /><circle cx="1227" cy="836" r="196" fill="none" stroke="#ebc766" stroke-opacity="0.33" stroke-width="2.0" /><circle cx="1496" cy="132" r="298" fill="none" stroke="#ebc766" stroke-opacity="0.41" stroke-width="2.0" />
+  <g transform="translate(1161 519) scale(0.4480)" opacity="0.16">
+      <path fill="#ffffff" d="M0 260C-140 150-300 60-300-70c0-90 70-160 160-160 60 0 110 32 140 82 30-50 80-82 140-82 90 0 160 70 160 160C300 60 140 150 0 260Z"/>
+    </g>
+  <rect width="1600" height="1000" fill="url(#dots)"/>
+  <rect width="1600" height="1000" fill="#0a172e" opacity="0.12"/>
+</svg>

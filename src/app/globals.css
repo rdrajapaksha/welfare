@@ -1,26 +1,423 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------ */
+/* Design tokens — logo match: black + Heart Link red                  */
+/* ------------------------------------------------------------------ */
+
+@theme {
+  /* Brand — logo red (#ec2a2b) */
+  --color-brand-50: #fef2f2;
+  --color-brand-100: #fee2e2;
+  --color-brand-200: #fecaca;
+  --color-brand-300: #f7a3a3;
+  --color-brand-400: #f06b6b;
+  --color-brand-500: #e83f40;
+  --color-brand-600: #ec2a2b;
+  --color-brand-700: #c91f20;
+  --color-brand-800: #a71c1d;
+  --color-brand-900: #8a1c1d;
+  --color-brand-950: #4c0b0c;
+
+  /* Donate — same logo red (CTA) */
+  --color-donate-50: #fef2f2;
+  --color-donate-100: #fee2e2;
+  --color-donate-200: #fecaca;
+  --color-donate-300: #f7a3a3;
+  --color-donate-400: #f06b6b;
+  --color-donate-500: #e83f40;
+  --color-donate-600: #ec2a2b;
+  --color-donate-700: #c91f20;
+  --color-donate-800: #a71c1d;
+  --color-donate-900: #8a1c1d;
+
+  /* Ink — true black / charcoal (logo black) */
+  --color-ink-50: #f7f7f7;
+  --color-ink-100: #eeeeee;
+  --color-ink-200: #dcdcdc;
+  --color-ink-300: #bdbdbd;
+  --color-ink-400: #8f8f8f;
+  --color-ink-500: #6b6b6b;
+  --color-ink-600: #525252;
+  --color-ink-700: #3d3d3d;
+  --color-ink-800: #262626;
+  --color-ink-900: #141414;
+  --color-ink-950: #0a0a0a;
+
+  /* Gold — muted bronze for trust / audited signals */
+  --color-gold-50: #faf8f2;
+  --color-gold-100: #f1ead6;
+  --color-gold-200: #e2d2a6;
+  --color-gold-300: #cdb06c;
+  --color-gold-400: #b89445;
+  --color-gold-500: #9f7a32;
+  --color-gold-600: #846129;
+  --color-gold-700: #6a4d25;
+  --color-gold-800: #574024;
+  --color-gold-900: #493622;
+
+  /* Teal — restrained secondary (charts / success) */
+  --color-teal-50: #f1f7f6;
+  --color-teal-100: #dceceb;
+  --color-teal-200: #b8d8d5;
+  --color-teal-300: #88bbb7;
+  --color-teal-400: #5a9a96;
+  --color-teal-500: #407e7a;
+  --color-teal-600: #326562;
+  --color-teal-700: #2b5250;
+  --color-teal-800: #254342;
+  --color-teal-900: #213937;
+
+  /* Neutral canvas */
+  --color-canvas: #f7f7f8;
+  --color-canvas-alt: #efefef;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, sans-serif;
+  --font-sinhala: var(--font-noto-sinhala), var(--font-inter), sans-serif;
+  --font-tamil: var(--font-noto-tamil), var(--font-inter), sans-serif;
+
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.5rem;
+
+  --shadow-soft: 0 1px 2px rgb(10 10 10 / 0.05), 0 8px 24px -12px rgb(10 10 10 / 0.14);
+  --shadow-lift: 0 2px 4px rgb(10 10 10 / 0.06), 0 18px 40px -18px rgb(10 10 10 / 0.22);
+  --shadow-glow: 0 20px 56px -24px rgb(236 42 43 / 0.45);
+
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-shimmer: shimmer 2.2s linear infinite;
+  --animate-float: float 9s ease-in-out infinite;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-14px) scale(1.03);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+
+@layer base {
+  * {
+    border-color: --alpha(var(--color-ink-200) / 60%);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 8.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+  }
+
+  .dark body {
+    background-color: var(--color-ink-950);
+    color: var(--color-ink-100);
+  }
+
+  /*
+   * Locale fonts: keep metrics stable across EN / SI / TA so switching
+   * language does not reflow the layout. Same line-heights everywhere;
+   * only the typeface changes for readable Sinhala/Tamil glyphs.
+   */
+  [lang^="si"] body,
+  [lang^="si"] {
+    font-family: var(--font-sinhala);
+  }
+
+  [lang^="ta"] body,
+  [lang^="ta"] {
+    font-family: var(--font-tamil);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  /* SI/TA: same metrics as EN — only swap the typeface for glyphs */
+  [lang^="si"] h1,
+  [lang^="si"] h2,
+  [lang^="si"] h3,
+  [lang^="si"] h4,
+  [lang^="ta"] h1,
+  [lang^="ta"] h2,
+  [lang^="ta"] h3,
+  [lang^="ta"] h4 {
+    font-family: inherit;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+
+  p {
+    text-wrap: pretty;
+    line-height: 1.7;
+  }
+
+  /* Nav / UI chrome keep a consistent row height across scripts */
+  [lang^="si"] nav a,
+  [lang^="ta"] nav a,
+  [lang^="si"] .btn-stable,
+  [lang^="ta"] .btn-stable {
+    line-height: 1.25;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 3px;
+    border-radius: 0.25rem;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-200);
+    color: var(--color-brand-950);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Component utilities                                                 */
+/* ------------------------------------------------------------------ */
+
+@utility container-page {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  max-width: 80rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 2.5rem;
+  }
+}
+
+@utility section-y {
+  padding-block: 4rem;
+
+  @media (width >= 64rem) {
+    padding-block: 6rem;
+  }
+}
+
+@utility mesh-brand {
+  background-image:
+    radial-gradient(60rem 30rem at 12% -10%, --alpha(var(--color-ink-200) / 55%), transparent 60%),
+    radial-gradient(45rem 25rem at 92% 8%, --alpha(var(--color-brand-300) / 28%), transparent 62%),
+    radial-gradient(40rem 24rem at 50% 108%, --alpha(var(--color-ink-300) / 35%), transparent 60%);
+}
+
+@utility mesh-ink {
+  background-image:
+    radial-gradient(55rem 28rem at 8% 0%, --alpha(var(--color-brand-700) / 40%), transparent 60%),
+    radial-gradient(45rem 26rem at 96% 12%, --alpha(var(--color-ink-800) / 70%), transparent 62%),
+    radial-gradient(38rem 22rem at 46% 110%, --alpha(var(--color-brand-900) / 30%), transparent 60%);
+}
+
+@utility glass-panel {
+  background-color: --alpha(#fff / 78%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid --alpha(#fff / 55%);
+
+  .dark & {
+    background-color: --alpha(var(--color-ink-900) / 72%);
+    border-color: --alpha(#fff / 10%);
+  }
+}
+
+@utility card-surface {
+  background-color: #fff;
+  border: 1px solid --alpha(var(--color-ink-200) / 80%);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-soft);
+
+  .dark & {
+    background-color: --alpha(var(--color-ink-900) / 80%);
+    border-color: --alpha(#fff / 8%);
+  }
+}
+
+@utility text-gradient-brand {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-brand-700),
+    var(--color-brand-600) 45%,
+    var(--color-ink-800)
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+@utility prose-hla {
+  color: var(--color-ink-700);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+
+  & > * + * {
+    margin-block-start: 1.25em;
+  }
+
+  & h2 {
+    margin-block-start: 2.25em;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-ink-900);
+  }
+
+  & h3 {
+    margin-block-start: 1.75em;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-ink-900);
+  }
+
+  & ul,
+  & ol {
+    padding-inline-start: 1.35em;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  & ul {
+    list-style: disc;
+  }
+
+  & ol {
+    list-style: decimal;
+  }
+
+  & strong {
+    color: var(--color-ink-900);
+    font-weight: 650;
+  }
+
+  & a {
+    color: var(--color-brand-700);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  & blockquote {
+    border-inline-start: 3px solid var(--color-brand-500);
+    padding-inline-start: 1.25rem;
+    font-style: italic;
+    color: var(--color-ink-600);
+  }
+
+  .dark & {
+    color: var(--color-ink-200);
+  }
+
+  .dark & h2,
+  .dark & h3,
+  .dark & strong {
+    color: #fff;
+  }
+
+  .dark & a {
+    color: var(--color-brand-300);
+  }
+}
+
+@utility reveal {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility scrollbar-slim {
+  scrollbar-width: thin;
+  scrollbar-color: --alpha(var(--color-ink-300) / 70%) transparent;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: --alpha(var(--color-ink-300) / 70%);
+    border-radius: 999px;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
 }
