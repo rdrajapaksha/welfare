@@ -38,7 +38,6 @@ export const siteConfig = {
   fees: {
     registration: 1000,
     monthly: 300,
-    life: 25000,
   },
 
   social: [

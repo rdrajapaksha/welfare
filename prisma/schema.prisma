@@ -52,7 +52,7 @@ model Member {
   email            String?
   bloodGroup       String?
   photoUrl         String?
-  membershipType   String    @default("ORDINARY") // ORDINARY | LIFE | HONORARY | JUNIOR
+  membershipType   String    @default("ORDINARY") // ORDINARY | HONORARY | JUNIOR
   status           String    @default("ACTIVE") // ACTIVE | PENDING | SUSPENDED | RESIGNED
   joinedAt         DateTime  @default(now())
   emergencyName    String?
@@ -280,7 +280,7 @@ model Donation {
   phone       String?
   amount      Int
   currency    String    @default("LKR")
-  method      String    @default("BANK_TRANSFER") // BANK_TRANSFER | ONLINE_CARD | CASH | CHEQUE
+  method      String    @default("BANK_TRANSFER") // BANK_TRANSFER | CASH | CHEQUE
   purpose     String    @default("GENERAL") // GENERAL | EMERGENCY | EDUCATION | MEDICAL | PROJECT
   message     String?
   isAnonymous Boolean   @default(false)

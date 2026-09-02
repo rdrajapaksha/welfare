@@ -16,16 +16,22 @@ export function JoinForm({ d }: { d: Dictionary }) {
 
   if (state.ok) {
     return (
-      <FormAlert tone="success" title={d.common.success}>
-        <p>
-          {d.members.step2Text} {state.reference && `(${d.common.reference}: ${state.reference})`}
-        </p>
+      <FormAlert tone="success" title={d.members.requestReceivedTitle}>
+        <p>{d.members.requestReceivedText}</p>
+        {state.reference && (
+          <p className="mt-2 font-semibold">
+            {d.common.reference}: {state.reference}
+          </p>
+        )}
       </FormAlert>
     );
   }
 
   return (
     <form action={action} className="grid gap-6">
+      <FormAlert tone="info" title={d.members.requestOnlyTitle}>
+        {d.members.requestOnlyText}
+      </FormAlert>
       {state.error && (
         <FormAlert
           tone="error"
@@ -34,7 +40,9 @@ export function JoinForm({ d }: { d: Dictionary }) {
               ? d.validation.duplicateNic
               : state.error === "duplicateEmail"
                 ? d.validation.duplicateEmail
-                : d.common.error
+                : state.error === "alreadyMember"
+                  ? d.members.alreadyMember
+                  : d.common.error
           }
         />
       )}
@@ -106,7 +114,7 @@ export function JoinForm({ d }: { d: Dictionary }) {
       </Fieldset>
       <Button type="submit" disabled={pending} size="lg">
         {pending && <Loader2 className="size-4 animate-spin" />}
-        {pending ? d.common.submitting : d.members.applyNow}
+        {pending ? d.common.submitting : d.members.submitRequest}
       </Button>
     </form>
   );

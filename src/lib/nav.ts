@@ -149,6 +149,7 @@ export function adminNav(d: Dictionary) {
     { label: d.admin.members, href: "/admin/members", icon: "Users" },
     { label: d.admin.applications, href: "/admin/applications", icon: "FileCheck" },
     { label: d.admin.donations, href: "/admin/donations", icon: "HandCoins" },
+    { label: d.admin.fees, href: "/admin/fees", icon: "Wallet" },
     { label: d.admin.events, href: "/admin/events", icon: "CalendarDays" },
     { label: d.admin.elections, href: "/admin/elections", icon: "Vote" },
     { label: d.admin.news, href: "/admin/news", icon: "Newspaper" },

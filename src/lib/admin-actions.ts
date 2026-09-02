@@ -662,3 +662,115 @@ export async function adminDeleteSuggestion(formData: FormData) {
   await prisma.suggestion.delete({ where: { id } });
   revalidatePath(`/${locale}/admin/suggestions`);
 }
+
+// ---------------------------------------------------------------------------
+// Membership fees
+// ---------------------------------------------------------------------------
+
+export async function adminUpdateMembershipFees(formData: FormData) {
+  const locale = localeOf(formData);
+  await requireAdmin(locale);
+  const { setMembershipFee } = await import("./membership-fees");
+
+  const monthly = intOr(formData, "monthly", null);
+  const registration = intOr(formData, "registration", null);
+
+  if (monthly != null) await setMembershipFee("monthly", monthly);
+  if (registration != null) await setMembershipFee("registration", registration);
+
+  revalidateAdmin(locale, ["/join", "/dashboard", "/dashboard/payments", "/admin/fees", "/admin/members"]);
+  redirect(`/${locale}/admin/fees?saved=1`);
+}
+
+export async function adminRecordMembershipPayment(formData: FormData) {
+  const locale = localeOf(formData);
+  await requireAdmin(locale);
+  const { generateReference } = await import("./utils");
+  const { getMembershipFees } = await import("./membership-fees");
+
+  const memberId = str(formData, "memberId");
+  const periodYear = intOr(formData, "periodYear", new Date().getFullYear());
+  const periodMonth = intOr(formData, "periodMonth", new Date().getMonth() + 1);
+  if (!memberId || !periodYear || !periodMonth) return;
+
+  const fees = await getMembershipFees();
+  const amount = intOr(formData, "amount", fees.monthly) ?? fees.monthly;
+  const methodRaw = str(formData, "method") || "BANK_TRANSFER";
+  const method = ["BANK_TRANSFER", "CASH", "CHEQUE"].includes(methodRaw) ? methodRaw : "BANK_TRANSFER";
+
+  const existing = await prisma.payment.findFirst({
+    where: {
+      memberId,
+      type: "MEMBERSHIP_FEE",
+      periodYear,
+      periodMonth,
+      status: { in: ["PAID", "PENDING"] },
+    },
+  });
+  if (existing?.status === "PAID") {
+    redirect(`/${locale}/admin/fees?error=duplicate`);
+  }
+  if (existing?.status === "PENDING") {
+    await prisma.payment.update({
+      where: { id: existing.id },
+      data: {
+        amount,
+        method,
+        status: "PAID",
+        paidAt: dateOrNull(formData, "paidAt") ?? new Date(),
+        note: str(formData, "note") || existing.note,
+      },
+    });
+    revalidateAdmin(locale, ["/dashboard", "/dashboard/payments", "/admin/fees", `/admin/members/${memberId}`]);
+    redirect(`/${locale}/admin/fees?paid=1`);
+  }
+
+  await prisma.payment.create({
+    data: {
+      receiptNo: generateReference("REC"),
+      memberId,
+      amount,
+      type: "MEMBERSHIP_FEE",
+      periodYear,
+      periodMonth,
+      method,
+      status: "PAID",
+      paidAt: dateOrNull(formData, "paidAt") ?? new Date(),
+      note: str(formData, "note") || null,
+    },
+  });
+
+  revalidateAdmin(locale, ["/dashboard", "/dashboard/payments", "/admin/fees", `/admin/members/${memberId}`]);
+  redirect(`/${locale}/admin/fees?paid=1`);
+}
+
+export async function adminConfirmMembershipPayment(formData: FormData) {
+  const locale = localeOf(formData);
+  await requireAdmin(locale);
+  const paymentId = str(formData, "paymentId");
+  if (!paymentId) return;
+
+  const payment = await prisma.payment.findUnique({ where: { id: paymentId } });
+  if (!payment || payment.status !== "PENDING") {
+    redirect(`/${locale}/admin/fees?error=duplicate`);
+  }
+
+  await prisma.payment.update({
+    where: { id: paymentId },
+    data: {
+      status: "PAID",
+      paidAt: new Date(),
+      note: payment.note
+        ? `${payment.note} · Confirmed by office`
+        : "Confirmed by office",
+    },
+  });
+
+  revalidateAdmin(locale, [
+    "/dashboard",
+    "/dashboard/payments",
+    "/admin/fees",
+    `/admin/members/${payment.memberId}`,
+  ]);
+  redirect(`/${locale}/admin/fees?confirmed=1`);
+}

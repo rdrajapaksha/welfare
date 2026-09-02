@@ -28,6 +28,16 @@ export default async function DashboardHome({ params }: { params: Promise<{ loca
       })
     : null;
 
+  const { getMemberArrears } = await import("@/lib/membership-fees");
+  const arrears = member
+    ? await getMemberArrears({
+        id: member.id,
+        joinedAt: member.joinedAt,
+        membershipType: member.membershipType,
+        status: member.status,
+      })
+    : null;
+
   const announcements = await prisma.announcement.findMany({
     where: { isPublished: true, audience: { in: ["ALL", "MEMBERS"] } },
     orderBy: [{ isPinned: "desc" }, { publishedAt: "desc" }],
@@ -44,8 +54,17 @@ export default async function DashboardHome({ params }: { params: Promise<{ loca
         <StatCard label={d.dashboard.membershipCard} value={member?.membershipNo ?? "—"} hint={member?.status} />
         <StatCard
           label={d.dashboard.duesTitle}
-          value={member?.payments[0] ? formatCurrency(member.payments[0].amount, locale) : d.dashboard.duesClear}
-          tone="teal"
+          value={
+            arrears && arrears.monthsDue > 0
+              ? formatCurrency(arrears.amountDue, locale)
+              : d.dashboard.duesClear
+          }
+          hint={
+            arrears && arrears.monthsDue > 0
+              ? `${d.fees.arrearsShort} · ${arrears.monthsDue}`
+              : undefined
+          }
+          tone={arrears && arrears.monthsDue > 0 ? "ink" : "teal"}
         />
         <StatCard label={d.dashboard.tickets} value={member?.tickets.length ?? 0} tone="gold" />
       </div>

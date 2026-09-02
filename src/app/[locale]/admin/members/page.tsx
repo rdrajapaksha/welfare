@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth";
 import { getDictionary, isLocale, type Locale } from "@/i18n";
 import { prisma } from "@/lib/prisma";
 import { adminCreateMember } from "@/lib/admin-actions";
+import { listMembersInArrears } from "@/lib/membership-fees";
 import { MEMBERSHIP_TYPES, MEMBER_STATUSES, SRI_LANKA_DISTRICTS } from "@/lib/constants";
 import { memberStatusLabel, membershipTypeLabel } from "@/lib/labels";
 import { formatDateShort } from "@/lib/utils";
@@ -42,6 +43,9 @@ export default async function AdminMembersPage({
       : {},
     orderBy: { joinedAt: "desc" },
   });
+
+  const { rows: arrearsRows } = await listMembersInArrears();
+  const arrearsById = new Map(arrearsRows.map((r) => [r.member.id, r.arrears]));
 
   return (
     <div className="space-y-8">
@@ -129,28 +133,49 @@ export default async function AdminMembersPage({
             d.forms.district,
             d.forms.membershipType,
             d.common.status,
+            d.fees.dues,
             d.members.memberSince,
             d.common.actions,
           ]}
         >
-          {members.map((m) => (
-            <tr key={m.id} className="text-ink-800 dark:text-ink-100">
-              <td className="px-4 py-3 font-semibold">{m.membershipNo}</td>
-              <td className="px-4 py-3">{m.fullName}</td>
-              <td className="px-4 py-3">{m.nic}</td>
-              <td className="px-4 py-3">{m.district}</td>
-              <td className="px-4 py-3">{membershipTypeLabel(d, m.membershipType)}</td>
-              <td className="px-4 py-3">
-                <Badge tone={statusTone(m.status)}>{memberStatusLabel(d, m.status)}</Badge>
-              </td>
-              <td className="px-4 py-3">{formatDateShort(m.joinedAt, locale)}</td>
-              <td className="px-4 py-3">
-                <ButtonLink href={`/${locale}/admin/members/${m.id}`} size="sm" variant="ghost">
-                  {d.common.edit}
-                </ButtonLink>
-              </td>
-            </tr>
-          ))}
+          {members.map((m) => {
+            const arrears = arrearsById.get(m.id);
+            const inArrears = (arrears?.monthsDue ?? 0) > 0;
+            return (
+              <tr
+                key={m.id}
+                className={
+                  inArrears
+                    ? "bg-red-50/80 text-ink-900 dark:bg-red-950/25 dark:text-ink-100"
+                    : "text-ink-800 dark:text-ink-100"
+                }
+              >
+                <td className="px-4 py-3 font-semibold">{m.membershipNo}</td>
+                <td className="px-4 py-3">{m.fullName}</td>
+                <td className="px-4 py-3">{m.nic}</td>
+                <td className="px-4 py-3">{m.district}</td>
+                <td className="px-4 py-3">{membershipTypeLabel(d, m.membershipType)}</td>
+                <td className="px-4 py-3">
+                  <Badge tone={statusTone(m.status)}>{memberStatusLabel(d, m.status)}</Badge>
+                </td>
+                <td className="px-4 py-3">
+                  {inArrears ? (
+                    <Badge tone="danger">
+                      {d.fees.arrearsShort} · {arrears!.monthsDue}
+                    </Badge>
+                  ) : (
+                    <Badge tone="success">{d.fees.paidUp}</Badge>
+                  )}
+                </td>
+                <td className="px-4 py-3">{formatDateShort(m.joinedAt, locale)}</td>
+                <td className="px-4 py-3">
+                  <ButtonLink href={`/${locale}/admin/members/${m.id}`} size="sm" variant="ghost">
+                    {d.common.edit}
+                  </ButtonLink>
+                </td>
+              </tr>
+            );
+          })}
         </DataTable>
       )}
     </div>

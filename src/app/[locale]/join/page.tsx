@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/i18n";
 import { buildMetadata } from "@/lib/seo";
-import { siteConfig } from "@/lib/site";
+import { getMembershipFees } from "@/lib/membership-fees";
 import { formatCurrency } from "@/lib/utils";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
@@ -21,6 +21,7 @@ export default async function JoinPage({ params }: { params: Promise<{ locale: s
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
   const d = await getDictionary(locale);
+  const fees = await getMembershipFees();
 
   const steps = [
     [d.members.step1, d.members.step1Text],
@@ -60,15 +61,11 @@ export default async function JoinPage({ params }: { params: Promise<{ locale: s
               <dl className="mt-3 space-y-2 text-sm">
                 <div className="flex justify-between gap-4">
                   <dt>{d.members.feesRegistration}</dt>
-                  <dd className="font-bold">{formatCurrency(siteConfig.fees.registration, locale)}</dd>
+                  <dd className="font-bold">{formatCurrency(fees.registration, locale)}</dd>
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt>{d.members.feesMonthly}</dt>
-                  <dd className="font-bold">{formatCurrency(siteConfig.fees.monthly, locale)}</dd>
-                </div>
-                <div className="flex justify-between gap-4">
-                  <dt>{d.members.feesLife}</dt>
-                  <dd className="font-bold">{formatCurrency(siteConfig.fees.life, locale)}</dd>
+                  <dd className="font-bold">{formatCurrency(fees.monthly, locale)}</dd>
                 </div>
               </dl>
               <ButtonLink href={`/${locale}/documents`} variant="ghost" className="mt-4 px-0">

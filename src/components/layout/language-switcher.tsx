@@ -72,7 +72,7 @@ export function LanguageSwitcher({
         <ul
           role="listbox"
           aria-label={label}
-          className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-2xl border border-ink-200 bg-white p-1.5 shadow-lift dark:border-white/12 dark:bg-ink-900"
+          className="absolute right-0 z-50 mt-2 w-40 overflow-hidden rounded-2xl border border-ink-200 bg-white p-1.5 shadow-lift dark:border-white/12 dark:bg-ink-900"
         >
           {locales.map((code) => (
             <li key={code} role="option" aria-selected={code === locale}>
@@ -80,18 +80,13 @@ export function LanguageSwitcher({
                 type="button"
                 onClick={() => switchTo(code)}
                 className={cn(
-                  "flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm transition",
+                  "flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm transition",
                   code === locale
                     ? "bg-brand-50 font-semibold text-brand-800 dark:bg-brand-500/15 dark:text-brand-200"
                     : "text-ink-700 hover:bg-ink-50 dark:text-ink-200 dark:hover:bg-white/8",
                 )}
               >
-                <span className="flex flex-col items-start">
-                  <span>{localeMeta[code].label}</span>
-                  {code !== "en" && (
-                    <span className="text-[0.7rem] opacity-60">{localeMeta[code].englishLabel}</span>
-                  )}
-                </span>
+                <span>{localeMeta[code].label}</span>
                 {code === locale && <Check aria-hidden className="size-4" />}
               </button>
             </li>

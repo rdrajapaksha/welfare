@@ -103,12 +103,12 @@ async function main() {
       whatsapp: "0771234501",
       email: "member@heartlinkallianz.lk",
       bloodGroup: "O+",
-      membershipType: "LIFE",
+      membershipType: "ORDINARY",
       status: "ACTIVE",
       joinedAt: daysAgo(2100),
       emergencyName: "Sandya Perera",
       emergencyPhone: "0771234599",
-      bio: "Life member since 2018. Volunteers at medical camps in Colombo district.",
+      bio: "Member since 2018. Volunteers at medical camps in Colombo district.",
       showInDirectory: true,
       userId: demoUser.id,
     },
@@ -390,7 +390,7 @@ async function main() {
     const [fullName, initials] = ALL_NAMES[i % ALL_NAMES.length];
     const district = DISTRICTS[i % DISTRICTS.length];
     const city = pickFrom(rng, CITY_BY_DISTRICT[district] ?? ["Town"]);
-    const types = ["ORDINARY", "ORDINARY", "ORDINARY", "LIFE", "JUNIOR"] as const;
+    const types = ["ORDINARY", "ORDINARY", "ORDINARY", "ORDINARY", "JUNIOR"] as const;
     const created = await prisma.member.create({
       data: {
         membershipNo: membershipNo(i + 1),
@@ -674,6 +674,13 @@ async function main() {
 
   await prisma.subscriber.create({
     data: { email: "news@example.lk", locale: "en", isConfirmed: true },
+  });
+
+  await prisma.siteSetting.createMany({
+    data: [
+      { key: "fee.monthly", valueEn: "300", valueSi: "300", valueTa: "300", group: "fees" },
+      { key: "fee.registration", valueEn: "1000", valueSi: "1000", valueTa: "1000", group: "fees" },
+    ],
   });
 
   const election = await prisma.election.create({

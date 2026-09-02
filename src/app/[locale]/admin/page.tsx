@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { getDictionary, isLocale, type Locale } from "@/i18n";
 import { prisma } from "@/lib/prisma";
+import { listMembersInArrears } from "@/lib/membership-fees";
 import { formatCurrency } from "@/lib/utils";
 import { StatCard } from "@/components/ui/misc";
 import { ButtonLink } from "@/components/ui/button";
@@ -19,7 +20,7 @@ export default async function AdminHome({ params }: { params: Promise<{ locale: 
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const yearStart = new Date(now.getFullYear(), 0, 1);
 
-  const [members, active, donationsMonth, donationsYear, pendingApps, openTickets, upcoming, volunteers, stats] =
+  const [members, active, donationsMonth, donationsYear, pendingApps, openTickets, upcoming, volunteers, stats, arrears] =
     await Promise.all([
       prisma.member.count(),
       prisma.member.count({ where: { status: "ACTIVE" } }),
@@ -36,7 +37,10 @@ export default async function AdminHome({ params }: { params: Promise<{ locale: 
       prisma.event.count({ where: { startsAt: { gte: now } } }),
       prisma.volunteerApplication.count({ where: { status: { in: ["NEW", "ACTIVE"] } } }),
       prisma.monthlyStat.findMany({ orderBy: [{ year: "asc" }, { month: "asc" }], take: 12 }),
+      listMembersInArrears(),
     ]);
+
+  const sampleArrears = arrears.rows[0]?.arrears;
 
   return (
     <div className="space-y-8">
@@ -44,6 +48,20 @@ export default async function AdminHome({ params }: { params: Promise<{ locale: 
         <h1 className="text-2xl font-extrabold">{d.admin.title}</h1>
         <p className="text-sm text-ink-500">{d.admin.demoReadOnly}</p>
       </div>
+
+      {arrears.rows.length > 0 && sampleArrears && (
+        <div className="rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-red-900 dark:border-red-800/60 dark:bg-red-950/40 dark:text-red-100">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="font-extrabold">
+              {d.admin.arrearsAlert.replace("{count}", String(arrears.rows.length))}
+            </p>
+            <ButtonLink href={`/${locale}/admin/fees`} size="sm" variant="danger">
+              {d.admin.fees}
+            </ButtonLink>
+          </div>
+        </div>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label={d.admin.kpiMembers} value={members} hint={`${d.admin.kpiActiveMembers}: ${active}`} />
         <StatCard
@@ -56,6 +74,7 @@ export default async function AdminHome({ params }: { params: Promise<{ locale: 
           value={formatCurrency(donationsYear._sum.amount ?? 0, locale, true)}
           tone="gold"
         />
+        <StatCard label={d.admin.inArrears} value={arrears.rows.length} tone="ink" />
         <StatCard label={d.admin.kpiOpenTickets} value={openTickets} tone="ink" />
         <StatCard label={d.admin.kpiPendingApplications} value={pendingApps} />
         <StatCard label={d.admin.kpiUpcomingEvents} value={upcoming} tone="teal" />

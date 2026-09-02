@@ -100,12 +100,28 @@ export async function joinAction(_prev: ActionState, formData: FormData): Promis
   const parsed = joinSchema.safeParse(raw);
   if (!parsed.success) return zodFail(parsed.error);
 
-  const existing = await prisma.membershipApplication.findFirst({
-    where: { nic: parsed.data.nic, status: { in: ["PENDING", "UNDER_REVIEW"] } },
-  });
-  if (existing) return fail("duplicateNic");
+  const email = parsed.data.email.toLowerCase();
 
-  const emailTaken = await prisma.user.findUnique({ where: { email: parsed.data.email.toLowerCase() } });
+  const alreadyMember = await prisma.member.findFirst({
+    where: {
+      OR: [{ nic: parsed.data.nic }, { email }],
+    },
+  });
+  if (alreadyMember) return fail("alreadyMember");
+
+  const existing = await prisma.membershipApplication.findFirst({
+    where: {
+      OR: [
+        { nic: parsed.data.nic, status: { in: ["PENDING", "UNDER_REVIEW"] } },
+        { email, status: { in: ["PENDING", "UNDER_REVIEW"] } },
+      ],
+    },
+  });
+  if (existing) {
+    return fail(existing.nic === parsed.data.nic ? "duplicateNic" : "duplicateEmail");
+  }
+
+  const emailTaken = await prisma.user.findUnique({ where: { email } });
   if (emailTaken) return fail("duplicateEmail");
 
   const created = await prisma.membershipApplication.create({
@@ -120,10 +136,11 @@ export async function joinAction(_prev: ActionState, formData: FormData): Promis
       city: parsed.data.city,
       district: parsed.data.district,
       phone: parsed.data.phone,
-      email: parsed.data.email.toLowerCase(),
+      email,
       membershipType: parsed.data.membershipType,
       referredBy: parsed.data.referredBy || null,
       motivation: parsed.data.motivation || null,
+      status: "PENDING",
     },
   });
 
@@ -181,16 +198,11 @@ export async function donateAction(_prev: ActionState, formData: FormData): Prom
       message: parsed.data.message || null,
       isAnonymous: parsed.data.isAnonymous,
       isRecurring: parsed.data.isRecurring,
-      status: parsed.data.method === "ONLINE_CARD" ? "CONFIRMED" : "PENDING",
-      confirmedAt: parsed.data.method === "ONLINE_CARD" ? new Date() : null,
+      status: "PENDING",
+      confirmedAt: null,
       memberId: user?.memberId ?? null,
     },
   });
-
-  if (created.status === "CONFIRMED") {
-    const { generateDonationReceiptPdf } = await import("./receipt");
-    await generateDonationReceiptPdf(created.id);
-  }
 
   return { ok: true, reference: created.reference };
 }
@@ -388,41 +400,115 @@ export async function adminDecideApplication(formData: FormData) {
 
   const application = await prisma.membershipApplication.findUnique({ where: { id } });
   if (!application) return;
+  if (application.status === "APPROVED" || application.status === "REJECTED") {
+    redirect(`/${locale}/admin/applications`);
+  }
 
-  if (decision === "APPROVED") {
-    const count = await prisma.member.count();
-    const membershipNo = `HLA-${String(1000 + count + 1).padStart(4, "0")}`;
-    await prisma.member.create({
+  if (decision === "REJECTED") {
+    await prisma.membershipApplication.update({
+      where: { id },
+      data: { status: "REJECTED", decidedAt: new Date() },
+    });
+    revalidatePath(`/${locale}/admin/applications`);
+    redirect(`/${locale}/admin/applications`);
+  }
+
+  // APPROVED — create member + login account (admin admit only)
+  const nicClash = await prisma.member.findUnique({ where: { nic: application.nic } });
+  if (nicClash) {
+    await prisma.membershipApplication.update({
+      where: { id },
       data: {
-        membershipNo,
-        fullName: application.fullName,
-        nameWithInitials: application.fullName
-          .split(/\s+/)
-          .filter(Boolean)
-          .map((p, i, arr) => (i === arr.length - 1 ? p : `${p[0]}.`))
-          .join(" "),
-        nic: application.nic,
-        dateOfBirth: application.dateOfBirth,
-        gender: application.gender,
-        occupation: application.occupation,
-        addressLine1: application.addressLine1,
-        city: application.city,
-        district: application.district,
-        phone: application.phone,
-        email: application.email,
-        membershipType: application.membershipType,
-        status: "ACTIVE",
-        showInDirectory: true,
+        status: "REJECTED",
+        decidedAt: new Date(),
+        reviewNote: "NIC already registered as a member.",
       },
+    });
+    revalidatePath(`/${locale}/admin/applications`);
+    redirect(`/${locale}/admin/applications?error=duplicate`);
+  }
+
+  const count = await prisma.member.count();
+  const membershipNo = `HLA-${String(1000 + count + 1).padStart(4, "0")}`;
+  const email = application.email.toLowerCase();
+  const bcrypt = (await import("bcryptjs")).default;
+  let tempPassword = "";
+
+  let user = await prisma.user.findUnique({
+    where: { email },
+    include: { member: { select: { id: true } } },
+  });
+
+  if (user?.member) {
+    await prisma.membershipApplication.update({
+      where: { id },
+      data: {
+        status: "REJECTED",
+        decidedAt: new Date(),
+        reviewNote: "Email already linked to another member account.",
+      },
+    });
+    revalidatePath(`/${locale}/admin/applications`);
+    redirect(`/${locale}/admin/applications?error=duplicate`);
+  }
+
+  if (!user) {
+    tempPassword = `HLA-${Math.random().toString(36).slice(2, 8).toUpperCase()}!`;
+    const passwordHash = await bcrypt.hash(tempPassword, 10);
+    user = await prisma.user.create({
+      data: {
+        email,
+        passwordHash,
+        role: "MEMBER",
+        name: application.fullName,
+        locale: "en",
+        isActive: true,
+      },
+      include: { member: { select: { id: true } } },
     });
   }
 
+  const member = await prisma.member.create({
+    data: {
+      membershipNo,
+      fullName: application.fullName,
+      nameWithInitials: application.fullName
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((p, i, arr) => (i === arr.length - 1 ? p : `${p[0]}.`))
+        .join(" "),
+      nic: application.nic,
+      dateOfBirth: application.dateOfBirth,
+      gender: application.gender,
+      occupation: application.occupation,
+      addressLine1: application.addressLine1,
+      city: application.city,
+      district: application.district,
+      phone: application.phone,
+      email,
+      membershipType: application.membershipType,
+      status: "ACTIVE",
+      showInDirectory: false,
+      userId: user.id,
+    },
+  });
+
   await prisma.membershipApplication.update({
     where: { id },
-    data: { status: decision, decidedAt: new Date() },
+    data: {
+      status: "APPROVED",
+      decidedAt: new Date(),
+      reviewNote: `Admitted as ${membershipNo}`,
+    },
   });
+
   revalidatePath(`/${locale}/admin/applications`);
   revalidatePath(`/${locale}/admin/members`);
+  revalidatePath(`/${locale}/members`);
+
+  const q = new URLSearchParams({ admitted: member.id, email });
+  if (tempPassword) q.set("temp", tempPassword);
+  redirect(`/${locale}/admin/applications?${q.toString()}`);
 }
 
 export async function adminVolunteerStatus(formData: FormData) {
@@ -498,4 +584,88 @@ export async function castVoteAction(_prev: ActionState, formData: FormData): Pr
 
   revalidatePath("/dashboard/vote");
   return { ok: true };
+}
+
+export async function renewMembershipFeeAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const user = await getCurrentUser();
+  if (!user?.memberId) return fail("unauthorized");
+
+  const method = String(formData.get("method") || "BANK_TRANSFER");
+  if (!["BANK_TRANSFER", "CASH", "CHEQUE"].includes(method)) {
+    return fail("invalidMethod");
+  }
+
+  const periodValues = formData
+    .getAll("periods")
+    .map((v) => String(v))
+    .filter(Boolean);
+
+  if (periodValues.length === 0) return fail("noneSelected");
+
+  const periods: { year: number; month: number }[] = [];
+  for (const raw of periodValues) {
+    const [yearPart, monthPart] = raw.split("-");
+    const year = Number(yearPart);
+    const month = Number(monthPart);
+    if (!Number.isInteger(year) || !Number.isInteger(month) || month < 1 || month > 12) {
+      return fail("invalidPeriod");
+    }
+    periods.push({ year, month });
+  }
+
+  const member = await prisma.member.findUnique({
+    where: { id: user.memberId },
+    select: { id: true, joinedAt: true, membershipType: true, status: true },
+  });
+  if (!member || member.status !== "ACTIVE") return fail("inactive");
+
+  const { getMemberArrears, getMembershipFees, isMonthlyFeeExempt } = await import("./membership-fees");
+  if (isMonthlyFeeExempt(member.membershipType)) return fail("exempt");
+
+  const [fees, arrears] = await Promise.all([getMembershipFees(), getMemberArrears(member)]);
+  const dueKeys = new Set(arrears.unpaidMonths.map((m) => `${m.year}-${m.month}`));
+
+  for (const p of periods) {
+    if (!dueKeys.has(`${p.year}-${p.month}`)) return fail("notDue");
+  }
+
+  const existing = await prisma.payment.findMany({
+    where: {
+      memberId: member.id,
+      type: "MEMBERSHIP_FEE",
+      status: { in: ["PAID", "PENDING"] },
+      OR: periods.map((p) => ({ periodYear: p.year, periodMonth: p.month })),
+    },
+  });
+  if (existing.length > 0) return fail("duplicate");
+
+  const batchNote = `Member renewal notice (${periods.length} month(s)) — awaiting office confirmation`;
+  const created = await prisma.$transaction(
+    periods.map((p) =>
+      prisma.payment.create({
+        data: {
+          receiptNo: generateReference("REC"),
+          memberId: member.id,
+          amount: fees.monthly,
+          type: "MEMBERSHIP_FEE",
+          periodYear: p.year,
+          periodMonth: p.month,
+          method,
+          status: "PENDING",
+          paidAt: new Date(),
+          note: batchNote,
+        },
+      }),
+    ),
+  );
+
+  revalidatePath("/dashboard/payments");
+  revalidatePath("/admin/fees");
+  return {
+    ok: true,
+    reference: created.map((row) => row.receiptNo).join(", "),
+  };
 }

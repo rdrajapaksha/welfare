@@ -2,8 +2,6 @@ import type { Dictionary } from "@/i18n/dictionaries/en";
 
 export function membershipTypeLabel(d: Dictionary, type: string) {
   switch (type) {
-    case "LIFE":
-      return d.members.typeLife;
     case "HONORARY":
       return d.members.typeHonorary;
     case "JUNIOR":
@@ -227,6 +225,27 @@ export function volunteerAreaLabel(d: Dictionary, area: string) {
       return d.volunteer.areaIt;
     default:
       return d.volunteer.areaEvents;
+  }
+}
+
+export function volunteerAreaDesc(d: Dictionary, area: string) {
+  switch (area) {
+    case "MEDICAL":
+      return d.volunteer.areaMedicalDesc;
+    case "EDUCATION":
+      return d.volunteer.areaEducationDesc;
+    case "FUNDRAISING":
+      return d.volunteer.areaFundraisingDesc;
+    case "MEDIA":
+      return d.volunteer.areaMediaDesc;
+    case "LOGISTICS":
+      return d.volunteer.areaLogisticsDesc;
+    case "ADMIN":
+      return d.volunteer.areaAdminDesc;
+    case "IT":
+      return d.volunteer.areaItDesc;
+    default:
+      return d.volunteer.areaEventsDesc;
   }
 }
 

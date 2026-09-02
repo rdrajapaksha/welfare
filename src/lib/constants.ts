@@ -28,7 +28,7 @@ export const SRI_LANKA_DISTRICTS = [
 
 export const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"] as const;
 
-export const MEMBERSHIP_TYPES = ["ORDINARY", "LIFE", "HONORARY", "JUNIOR"] as const;
+export const MEMBERSHIP_TYPES = ["ORDINARY", "HONORARY", "JUNIOR"] as const;
 export const MEMBER_STATUSES = ["ACTIVE", "PENDING", "SUSPENDED", "RESIGNED"] as const;
 
 export const PROGRAMME_CATEGORIES = [
@@ -48,7 +48,6 @@ export const DONATION_PURPOSES = [
 
 export const DONATION_METHODS = [
   "BANK_TRANSFER",
-  "ONLINE_CARD",
   "CASH",
   "CHEQUE",
 ] as const;

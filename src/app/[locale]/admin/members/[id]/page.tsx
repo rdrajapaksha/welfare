@@ -49,7 +49,12 @@ export default async function AdminMemberDetailPage({
             {formatDateShort(member.joinedAt, locale)}
           </p>
         </div>
-        <Badge tone={statusTone(member.status)}>{memberStatusLabel(d, member.status)}</Badge>
+        <div className="flex flex-wrap items-center gap-2">
+          <ButtonLink href={`/${locale}/admin/fees`} size="sm" variant="secondary">
+            {d.admin.recordPayment}
+          </ButtonLink>
+          <Badge tone={statusTone(member.status)}>{memberStatusLabel(d, member.status)}</Badge>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">

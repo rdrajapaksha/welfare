@@ -6,7 +6,7 @@ import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { VolunteerForm } from "@/components/forms/volunteer-form";
-import { volunteerAreaLabel } from "@/lib/labels";
+import { volunteerAreaDesc, volunteerAreaLabel } from "@/lib/labels";
 import { VOLUNTEER_AREAS } from "@/lib/constants";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -43,22 +43,26 @@ export default async function VolunteerPage({ params }: { params: Promise<{ loca
                 </li>
               ))}
             </ul>
-            <h3 className="mt-10 text-lg font-extrabold">{d.volunteer.areasTitle}</h3>
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {VOLUNTEER_AREAS.map((area) => (
-                <li
-                  key={area}
-                  className="rounded-full bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-800 dark:bg-brand-500/15 dark:text-brand-200"
-                >
-                  {volunteerAreaLabel(d, area)}
-                </li>
-              ))}
-            </ul>
           </div>
           <div className="card-surface p-6 lg:col-span-3 lg:p-8">
             <VolunteerForm d={d} />
           </div>
         </div>
+      </Section>
+      <Section className="border-t border-ink-100 dark:border-white/10">
+        <h2 className="text-2xl font-extrabold">{d.volunteer.categoriesTitle}</h2>
+        <p className="mt-2 max-w-2xl text-sm text-ink-600 dark:text-ink-300">{d.volunteer.areasTitle}</p>
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {VOLUNTEER_AREAS.map((area) => (
+            <li key={area} className="rounded-2xl border border-ink-100 bg-white/70 p-5 dark:border-white/10 dark:bg-white/5">
+              <p className="text-xs font-bold tracking-wider text-brand-600 uppercase">{area}</p>
+              <h3 className="mt-2 text-base font-extrabold">{volunteerAreaLabel(d, area)}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-600 dark:text-ink-300">
+                {volunteerAreaDesc(d, area)}
+              </p>
+            </li>
+          ))}
+        </ul>
       </Section>
     </>
   );
