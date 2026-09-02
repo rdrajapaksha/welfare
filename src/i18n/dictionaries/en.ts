@@ -1,19 +1,19 @@
 const en = {
   brand: {
     name: "Heart Link Allianz",
-    full: "Heart Link Allianz Welfare Association",
+    full: "Heart Link Allianz Welfare Society - Sri Lanka",
     short: "HLA",
-    tagline: "Linking hearts, lifting lives",
+    tagline: "Together for One Goal",
     regNo: "Reg. No. WA/2016/1187",
   },
 
   meta: {
-    defaultTitle: "Heart Link Allianz Welfare Association",
+    defaultTitle: "Heart Link Allianz Welfare Society - Sri Lanka",
     titleTemplate: "%s | Heart Link Allianz",
     description:
-      "Heart Link Allianz Welfare Association is a registered Sri Lankan welfare society delivering emergency assistance, member welfare, scholarships and community development projects with full financial transparency.",
+      "Heart Link Allianz Welfare Society - Sri Lanka is a registered Sri Lankan welfare society delivering emergency assistance, member welfare, scholarships and community development projects with full financial transparency.",
     keywords:
-      "welfare association Sri Lanka, Heart Link Allianz, member welfare, emergency assistance, community projects, charity Sri Lanka, donations, samithiya",
+      "welfare society Sri Lanka, Heart Link Allianz, member welfare, emergency assistance, community projects, charity Sri Lanka, donations, samithiya",
   },
 
   nav: {
@@ -110,6 +110,7 @@ const en = {
     showLess: "Show less",
     updated: "Updated",
     published: "Published",
+    draft: "Draft",
     category: "Category",
     total: "Total",
     amount: "Amount",
@@ -128,7 +129,7 @@ const en = {
   },
 
   home: {
-    heroEyebrow: "Registered Welfare Association · Sri Lanka",
+    heroEyebrow: "Registered Welfare Society · Sri Lanka",
     heroTitle: "Linking hearts,",
     heroTitleAccent: "lifting lives",
     heroSubtitle:
@@ -147,7 +148,7 @@ const en = {
     aboutEyebrow: "Who we are",
     aboutTitle: "A welfare society run by its members, for its community",
     aboutText:
-      "Heart Link Allianz Welfare Association was formed by a group of neighbours who believed no family should face a crisis alone. Today we are a member-governed society with an elected executive committee, audited accounts and welfare schemes that reach every district we serve.",
+      "Heart Link Allianz Welfare Society - Sri Lanka was formed by a group of neighbours who believed no family should face a crisis alone. Today we are a member-governed society with an elected executive committee, audited accounts and welfare schemes that reach every district we serve.",
     aboutPoint1: "Member-elected executive committee and annual general meeting",
     aboutPoint2: "Independently audited accounts published every year",
     aboutPoint3: "Welfare decisions taken by a transparent claims committee",
@@ -669,6 +670,20 @@ const en = {
     news: "Publish News",
     gallery: "Manage Gallery",
     content: "Website Content",
+    announcements: "Announcements",
+    announcementsHint: "Send notices that members see in their dashboard.",
+    sendAnnouncement: "Send announcement to members",
+    sendAnnouncementNote:
+      "Published announcements with audience “Members” or “All” appear immediately in the member area.",
+    publishAnnouncement: "Publish announcement",
+    sentAnnouncements: "Sent announcements",
+    viewAsMember: "Preview member view",
+    audience: "Audience",
+    audienceMembers: "Members only",
+    audienceAll: "All (public + members)",
+    audienceCommittee: "Committee only",
+    priority: "Priority",
+    pinAnnouncement: "Pin to top",
     tickets: "Support Tickets",
     volunteers: "Volunteers",
     documentsAdmin: "Documents",

@@ -1,7 +1,7 @@
 export const siteConfig = {
-  name: "Heart Link Allianz Welfare Association",
+  name: "Heart Link Allianz Welfare Society - Sri Lanka",
   shortName: "Heart Link Allianz",
-  legalName: "Heart Link Allianz Welfare Association",
+  legalName: "Heart Link Allianz Welfare Society - Sri Lanka",
   registrationNo: "WA/2016/1187",
   foundedYear: 2013,
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, ""),
@@ -30,7 +30,7 @@ export const siteConfig = {
   bank: {
     bankName: "Bank of Ceylon",
     branch: "Nugegoda Branch",
-    accountName: "Heart Link Allianz Welfare Association",
+    accountName: "Heart Link Allianz Welfare Society - Sri Lanka",
     accountNo: "0072 4451 8890",
     swift: "BCEYLKLX",
   },

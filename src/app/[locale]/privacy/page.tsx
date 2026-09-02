@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return buildMetadata({
     locale: raw,
     title: d.footer.privacy,
-    description: "How Heart Link Allianz Welfare Association collects, uses and protects personal information.",
+    description: "How Heart Link Allianz Welfare Society - Sri Lanka collects, uses and protects personal information.",
     path: "/privacy",
   });
 }

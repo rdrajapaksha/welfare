@@ -34,16 +34,20 @@ export function SiteFooter({ locale, d }: { locale: Locale; d: Dictionary }) {
         <div className="container-page grid gap-10 py-14 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-4">
             <Link href={href("/")} className="inline-flex max-w-full items-center gap-3">
-              <Image
-                src="/logo.png"
-                alt={d.brand.full}
-                width={56}
-                height={56}
-                className="size-14 shrink-0 object-contain"
-              />
+              <span className="flex shrink-0 flex-col items-center gap-1.5">
+                <Image
+                  src="/logo.png"
+                  alt={d.brand.full}
+                  width={56}
+                  height={56}
+                  className="size-14 object-contain"
+                />
+                <span className="font-times max-w-[11rem] text-center text-[0.85rem] leading-snug text-brand-200 italic">
+                  {d.brand.tagline}
+                </span>
+              </span>
               <span className="flex min-w-0 flex-col leading-tight">
                 <span className="text-base font-extrabold text-white sm:text-lg">{d.brand.full}</span>
-                <span className="text-xs font-medium text-brand-300">{d.brand.tagline}</span>
               </span>
             </Link>
 

@@ -359,8 +359,8 @@ export async function adminUpsertAnnouncement(formData: FormData) {
   if (id) await prisma.announcement.update({ where: { id }, data });
   else await prisma.announcement.create({ data });
 
-  revalidateAdmin(locale, ["/dashboard/announcements", "/admin/content"]);
-  redirect(`/${locale}/admin/content`);
+  revalidateAdmin(locale, ["/dashboard/announcements", "/admin/announcements", "/admin/content"]);
+  redirect(`/${locale}/admin/announcements`);
 }
 
 export async function adminDeleteAnnouncement(formData: FormData) {
@@ -369,7 +369,7 @@ export async function adminDeleteAnnouncement(formData: FormData) {
   const id = str(formData, "id");
   if (!id) return;
   await prisma.announcement.delete({ where: { id } });
-  revalidateAdmin(locale, ["/dashboard/announcements", "/admin/content"]);
+  revalidateAdmin(locale, ["/dashboard/announcements", "/admin/announcements", "/admin/content"]);
 }
 
 // ---------------------------------------------------------------------------

@@ -61,8 +61,8 @@ export const HISTORY: { year: string; title: Tri; text: Tri }[] = [
     year: "2016",
     title: tri("Registered as a welfare association", "සුබසාධක සමිතියක් ලෙස ලියාපදිංචිය", "நலன்புரி சங்கமாகப் பதிவு"),
     text: tri(
-      "The group adopted a constitution, elected its first committee and registered as Heart Link Allianz Welfare Association (WA/2016/1187).",
-      "කණ්ඩායම ව්‍යවස්ථාවක් සම්මත කර, පළමු කමිටුව තෝරා, හාට් ලින්ක් අලයන්ස් සුබසාධක සමිතිය ලෙස ලියාපදිංචි විය (WA/2016/1187).",
+      "The group adopted a constitution, elected its first committee and registered as Heart Link Allianz Welfare Society - Sri Lanka (WA/2016/1187).",
+      "කණ්ඩායම ව්‍යවස්ථාවක් සම්මත කර, පළමු කමිටුව තෝරා, Heart Link Allianz Welfare Society - Sri Lanka ලෙස ලියාපදිංචි විය (WA/2016/1187).",
       "குழு அரசியலமைப்பை ஏற்று, முதல் குழுவைத் தேர்ந்தெடுத்து, ஹார்ட் லிங்க் அலையன்ஸ் நலன்புரி சங்கமாகப் பதிவு செய்தது (WA/2016/1187).",
     ),
   },

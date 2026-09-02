@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return buildMetadata({
     locale: raw,
     title: d.footer.terms,
-    description: "Terms of use for the Heart Link Allianz Welfare Association website and member services.",
+    description: "Terms of use for the Heart Link Allianz Welfare Society - Sri Lanka website and member services.",
     path: "/terms",
   });
 }

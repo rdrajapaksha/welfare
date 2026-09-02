@@ -5,7 +5,7 @@ import { getDictionary } from "@/i18n";
 export const runtime = "nodejs";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Heart Link Allianz Welfare Association";
+export const alt = "Heart Link Allianz Welfare Society - Sri Lanka";
 
 export default async function OpenGraphImage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;

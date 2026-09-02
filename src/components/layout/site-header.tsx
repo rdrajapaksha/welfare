@@ -128,31 +128,36 @@ export function SiteHeader({
         )}
       >
         {/* Brand bar */}
-        <div className="container-page flex items-center gap-3 py-3">
-          <Link href={href("/")} className="group flex min-w-0 flex-1 items-center gap-3">
-            <Image
-              src="/logo.png"
-              alt={labels.brandFull}
-              width={56}
-              height={56}
-              priority
-              className="size-11 shrink-0 object-contain sm:size-12"
-            />
-            <span className="min-w-0 text-[0.8rem] leading-snug font-extrabold tracking-tight text-ink-950 sm:text-[0.95rem] sm:leading-tight lg:text-base dark:text-white">
+        <div className="container-page flex items-center gap-2.5 py-2">
+          <Link href={href("/")} className="group flex min-w-0 flex-1 items-center gap-2.5">
+            <span className="anim-enter flex shrink-0 flex-col items-center gap-0.5">
+              <Image
+                src="/logo.png"
+                alt={labels.brandFull}
+                width={44}
+                height={44}
+                priority
+                className="logo-hover size-9 object-contain group-hover:scale-[1.04] sm:size-10"
+              />
+              <span className="anim-fade anim-delay-2 font-times max-w-[8.5rem] text-center text-[0.62rem] leading-snug text-ink-800 italic sm:max-w-[9.5rem] sm:text-[0.7rem] dark:text-ink-200">
+                {labels.brandTagline}
+              </span>
+            </span>
+            <span className="anim-enter anim-delay-1 min-w-0 text-[0.75rem] leading-snug font-extrabold tracking-tight text-ink-950 sm:text-[0.88rem] sm:leading-tight lg:text-[0.95rem] dark:text-white">
               {labels.brandFull}
             </span>
           </Link>
 
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="anim-fade anim-delay-3 flex shrink-0 items-center gap-2">
             <div className="hidden sm:block">
               <LanguageSwitcher locale={locale} label={labels.language} />
             </div>
 
             <Link
               href={href("/donations")}
-              className="inline-flex h-10 items-center gap-1.5 rounded-full bg-brand-600 px-3.5 text-sm font-bold text-white shadow-[0_10px_26px_-12px_rgb(236_42_43/0.5)] transition hover:bg-brand-700 active:translate-y-px sm:px-4"
+              className="group inline-flex h-9 items-center gap-1.5 rounded-full bg-brand-600 px-3 text-sm font-bold text-white shadow-[0_10px_26px_-12px_rgb(236_42_43/0.5)] transition-all duration-300 hover:-translate-y-px hover:bg-brand-700 hover:shadow-[0_14px_30px_-12px_rgb(236_42_43/0.55)] active:translate-y-0 sm:px-3.5"
             >
-              <Heart aria-hidden className="size-4" />
+              <Heart aria-hidden className="size-3.5 transition-transform duration-300 group-hover:scale-110" />
               <span className="hidden sm:inline">{labels.donate}</span>
             </Link>
 
@@ -161,9 +166,9 @@ export function SiteHeader({
               onClick={() => setMobileOpen(true)}
               aria-label={labels.openMenu}
               aria-expanded={mobileOpen}
-              className="grid size-10 place-items-center rounded-full border border-ink-200 text-ink-800 transition hover:border-brand-400 hover:text-brand-700 xl:hidden dark:border-white/15 dark:text-white"
+              className="grid size-9 place-items-center rounded-full border border-ink-200 text-ink-800 transition-all duration-200 hover:border-brand-400 hover:text-brand-700 xl:hidden dark:border-white/15 dark:text-white"
             >
-              <Menu aria-hidden className="size-5" />
+              <Menu aria-hidden className="size-4.5" />
             </button>
           </div>
         </div>
@@ -171,15 +176,15 @@ export function SiteHeader({
         {/* Centered desktop nav */}
         <nav
           aria-label={labels.mainNav}
-          className="hidden border-t border-ink-200/70 xl:block dark:border-white/10"
+          className="anim-fade anim-delay-2 hidden border-t border-ink-200/70 xl:block dark:border-white/10"
         >
-          <ul className="container-page flex flex-wrap items-center justify-center gap-x-0.5 gap-y-1 py-1.5">
+          <ul className="container-page flex flex-wrap items-center justify-center gap-x-0.5 gap-y-0.5 py-1">
             {nav.map((item) => (
               <li key={item.label} className="group relative">
                 <Link
                   href={href(item.href)}
                   className={cn(
-                    "inline-flex items-center gap-1 rounded-full px-3 py-2 text-[0.8125rem] font-semibold whitespace-nowrap transition-colors",
+                    "nav-link-motion inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[0.78rem] font-semibold whitespace-nowrap",
                     isActive(item.href)
                       ? "bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-200"
                       : "text-ink-700 hover:bg-ink-100/70 hover:text-brand-700 dark:text-ink-200 dark:hover:bg-white/8 dark:hover:text-brand-300",
@@ -228,13 +233,18 @@ export function SiteHeader({
           <div className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-canvas shadow-2xl dark:bg-ink-950">
             <div className="flex min-h-18 shrink-0 items-center justify-between gap-3 border-b border-ink-200 px-5 py-3 dark:border-white/10">
               <div className="flex min-w-0 items-center gap-2.5">
-                <Image
-                  src="/logo.png"
-                  alt={labels.brandFull}
-                  width={40}
-                  height={40}
-                  className="size-10 shrink-0 object-contain"
-                />
+                <span className="flex shrink-0 flex-col items-center gap-1">
+                  <Image
+                    src="/logo.png"
+                    alt={labels.brandFull}
+                    width={40}
+                    height={40}
+                    className="size-10 object-contain"
+                  />
+                  <span className="font-times max-w-[8rem] text-center text-[0.7rem] leading-snug text-ink-700 italic dark:text-ink-200">
+                    {labels.brandTagline}
+                  </span>
+                </span>
                 <span className="text-sm leading-snug font-extrabold text-ink-950 dark:text-white">
                   {labels.brandFull}
                 </span>

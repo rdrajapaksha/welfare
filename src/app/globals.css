@@ -77,6 +77,7 @@
   --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, sans-serif;
   --font-sinhala: var(--font-noto-sinhala), var(--font-inter), sans-serif;
   --font-tamil: var(--font-noto-tamil), var(--font-inter), sans-serif;
+  --font-times: "Times New Roman", Times, "Liberation Serif", Georgia, serif;
 
   --radius-4xl: 2rem;
   --radius-5xl: 2.5rem;
@@ -86,6 +87,8 @@
   --shadow-glow: 0 20px 56px -24px rgb(236 42 43 / 0.45);
 
   --animate-fade-up: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-soft-rise: soft-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-marquee: marquee 38s linear infinite;
   --animate-shimmer: shimmer 2.2s linear infinite;
   --animate-float: float 9s ease-in-out infinite;
@@ -95,6 +98,26 @@
   from {
     opacity: 0;
     transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes soft-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
   }
   to {
     opacity: 1;
@@ -310,6 +333,10 @@
   color: transparent;
 }
 
+@utility font-times {
+  font-family: var(--font-times);
+}
+
 @utility prose-hla {
   color: var(--color-ink-700);
   font-size: 1.0625rem;
@@ -396,6 +423,62 @@
   @media (prefers-reduced-motion: reduce) {
     opacity: 1;
     transform: none;
+  }
+}
+
+@utility anim-enter {
+  animation: soft-rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@utility anim-enter-slow {
+  animation: soft-rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@utility anim-fade {
+  animation: fade-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@utility anim-delay-1 {
+  animation-delay: 80ms;
+}
+
+@utility anim-delay-2 {
+  animation-delay: 160ms;
+}
+
+@utility anim-delay-3 {
+  animation-delay: 240ms;
+}
+
+@utility anim-delay-4 {
+  animation-delay: 320ms;
+}
+
+@utility logo-hover {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@utility nav-link-motion {
+  position: relative;
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &:hover {
+    transform: translateY(-1px);
   }
 }
 

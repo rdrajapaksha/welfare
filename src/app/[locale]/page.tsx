@@ -77,30 +77,32 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div aria-hidden className="mesh-brand pointer-events-none absolute inset-0" />
         <div className="container-page relative grid items-center gap-12 py-16 lg:grid-cols-12 lg:py-24">
           <div className="lg:col-span-6">
-            <p className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white/80 px-3 py-1 text-xs font-bold tracking-[0.12em] text-brand-800 uppercase dark:border-white/15 dark:bg-white/5 dark:text-brand-200">
+            <p className="anim-enter inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white/80 px-3 py-1 text-xs font-bold tracking-[0.12em] text-brand-800 uppercase dark:border-white/15 dark:bg-white/5 dark:text-brand-200">
               <Sparkles className="size-3.5" aria-hidden />
               {d.home.heroEyebrow}
             </p>
-            <h1 className="mt-6 text-4xl font-extrabold tracking-tight sm:text-6xl lg:text-[4.1rem] lg:leading-[1.05]">
+            <h1 className="anim-enter-slow anim-delay-1 mt-6 text-4xl font-extrabold tracking-tight sm:text-6xl lg:text-[4.1rem] lg:leading-[1.05]">
               {d.home.heroTitle}{" "}
               <span className="text-gradient-brand">{d.home.heroTitleAccent}</span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-600 dark:text-ink-300">{d.home.heroSubtitle}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href={href("/donations")} size="lg" variant="donate">
+            <p className="anim-enter anim-delay-2 mt-6 max-w-xl text-lg leading-relaxed text-ink-600 dark:text-ink-300">
+              {d.home.heroSubtitle}
+            </p>
+            <div className="anim-enter anim-delay-3 mt-8 flex flex-wrap gap-3">
+              <ButtonLink href={href("/donations")} size="lg" variant="donate" className="group">
                 {d.home.heroPrimaryCta}
-                <ArrowRight className="size-4" />
+                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
               </ButtonLink>
               <ButtonLink href={href("/join")} variant="outline" size="lg">
                 {d.home.heroSecondaryCta}
               </ButtonLink>
             </div>
-            <p className="mt-6 flex items-center gap-2 text-sm font-medium text-ink-500 dark:text-ink-400">
+            <p className="anim-fade anim-delay-4 mt-6 flex items-center gap-2 text-sm font-medium text-ink-500 dark:text-ink-400">
               <ShieldCheck className="size-4 text-teal-600" aria-hidden />
               {d.home.heroTrust}
             </p>
           </div>
-          <div className="relative lg:col-span-6">
+          <div className="anim-enter-slow anim-delay-2 relative lg:col-span-6">
             <MediaFrame
               src="/media/hero-primary.svg"
               alt=""

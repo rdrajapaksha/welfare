@@ -3,19 +3,19 @@ import type { Dictionary } from "./en";
 const ta: Dictionary = {
   brand: {
     name: "ஹார்ட் லிங்க் அலையன்ஸ்",
-    full: "ஹார்ட் லிங்க் அலையன்ஸ் நலன்புரி சங்கம்",
+    full: "Heart Link Allianz Welfare Society - Sri Lanka",
     short: "HLA",
-    tagline: "இதயங்களை இணைத்து, வாழ்வை உயர்த்துகிறோம்",
+    tagline: "Together for One Goal",
     regNo: "பதிவு எண் WA/2016/1187",
   },
 
   meta: {
-    defaultTitle: "ஹார்ட் லிங்க் அலையன்ஸ் நலன்புரி சங்கம்",
-    titleTemplate: "%s | ஹார்ட் லிங்க் அலையன்ஸ்",
+    defaultTitle: "Heart Link Allianz Welfare Society - Sri Lanka",
+    titleTemplate: "%s | Heart Link Allianz",
     description:
-      "ஹார்ட் லிங்க் அலையன்ஸ் நலன்புரி சங்கம், அவசர கால நிவாரணம், உறுப்பினர் நலன், கல்வி உதவித்தொகை மற்றும் சமூக அபிவிருத்தித் திட்டங்களை முழுமையான நிதி வெளிப்படைத்தன்மையுடன் வழங்கும் இலங்கையின் பதிவு செய்யப்பட்ட நலன்புரி சங்கமாகும்.",
+      "Heart Link Allianz Welfare Society - Sri Lanka, அவசர கால நிவாரணம், உறுப்பினர் நலன், கல்வி உதவித்தொகை மற்றும் சமூக அபிவிருத்தித் திட்டங்களை முழுமையான நிதி வெளிப்படைத்தன்மையுடன் வழங்கும் இலங்கையின் பதிவு செய்யப்பட்ட நலன்புரி சங்கமாகும்.",
     keywords:
-      "நலன்புரி சங்கம், ஹார்ட் லிங்க் அலையன்ஸ், உறுப்பினர் நலன், அவசர உதவி, சமூக திட்டங்கள், நன்கொடை, இலங்கை",
+      "நலன்புரி சங்கம், Heart Link Allianz, உறுப்பினர் நலன், அவசர உதவி, சமூக திட்டங்கள், நன்கொடை, இலங்கை",
   },
 
   nav: {
@@ -112,6 +112,7 @@ const ta: Dictionary = {
     showLess: "குறைவாகக் காட்டு",
     updated: "புதுப்பிக்கப்பட்டது",
     published: "வெளியிடப்பட்டது",
+    draft: "வரைவு",
     category: "வகை",
     total: "மொத்தம்",
     amount: "தொகை",
@@ -668,6 +669,20 @@ const ta: Dictionary = {
     news: "செய்தி வெளியீடு",
     gallery: "படத்தொகுப்பு நிர்வாகம்",
     content: "வலைத்தள உள்ளடக்கம்",
+    announcements: "அறிவிப்புகள்",
+    announcementsHint: "உறுப்பினர் டாஷ்போர்டில் தெரியும் அறிவிப்புகளை அனுப்புங்கள்.",
+    sendAnnouncement: "உறுப்பினர்களுக்கு அறிவிப்பு அனுப்பு",
+    sendAnnouncementNote:
+      "“உறுப்பினர்கள்” அல்லது “அனைவரும்” பார்வையாளருடன் வெளியிடப்பட்ட அறிவிப்புகள் உறுப்பினர் பகுதியில் உடனடி தெரியும்.",
+    publishAnnouncement: "அறிவிப்பை வெளியிடு",
+    sentAnnouncements: "அனுப்பிய அறிவிப்புகள்",
+    viewAsMember: "உறுப்பினர் பார்வை",
+    audience: "பார்வையாளர்கள்",
+    audienceMembers: "உறுப்பினர்கள் மட்டும்",
+    audienceAll: "அனைவரும் (பொது + உறுப்பினர்)",
+    audienceCommittee: "குழு மட்டும்",
+    priority: "முன்னுரிமை",
+    pinAnnouncement: "மேலே பின் செய்",
     tickets: "ஆதரவு டிக்கெட்டுகள்",
     volunteers: "தொண்டர்கள்",
     documentsAdmin: "ஆவணங்கள்",

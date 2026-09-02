@@ -232,7 +232,7 @@ export function donateActionSchema(locale: Locale) {
   return {
     "@context": "https://schema.org",
     "@type": "DonateAction",
-    name: "Donate to Heart Link Allianz Welfare Association",
+    name: "Donate to Heart Link Allianz Welfare Society - Sri Lanka",
     recipient: { "@id": `${siteConfig.url}/#organization` },
     target: {
       "@type": "EntryPoint",

@@ -3,19 +3,19 @@ import type { Dictionary } from "./en";
 const si: Dictionary = {
   brand: {
     name: "හාට් ලින්ක් අලයන්ස්",
-    full: "හාට් ලින්ක් අලයන්ස් සුබසාධක සමිතිය",
+    full: "Heart Link Allianz Welfare Society - Sri Lanka",
     short: "HLA",
-    tagline: "හදවත් එකට බැඳ, ජීවිත නංවමු",
+    tagline: "Together for One Goal",
     regNo: "ලි. අංකය WA/2016/1187",
   },
 
   meta: {
-    defaultTitle: "හාට් ලින්ක් අලයන්ස් සුබසාධක සමිතිය",
-    titleTemplate: "%s | හාට් ලින්ක් අලයන්ස්",
+    defaultTitle: "Heart Link Allianz Welfare Society - Sri Lanka",
+    titleTemplate: "%s | Heart Link Allianz",
     description:
-      "හාට් ලින්ක් අලයන්ස් සුබසාධක සමිතිය යනු හදිසි ආපදා සහන, සාමාජික සුබසාධනය, ශිෂ්‍යත්ව සහ ප්‍රජා සංවර්ධන ව්‍යාපෘති සම්පූර්ණ මූල්‍ය විනිවිදභාවයකින් ක්‍රියාත්මක කරන ලියාපදිංචි ශ්‍රී ලාංකික සුබසාධක සමිතියකි.",
+      "Heart Link Allianz Welfare Society - Sri Lanka යනු හදිසි ආපදා සහන, සාමාජික සුබසාධනය, ශිෂ්‍යත්ව සහ ප්‍රජා සංවර්ධන ව්‍යාපෘති සම්පූර්ණ මූල්‍ය විනිවිදභාවයකින් ක්‍රියාත්මක කරන ලියාපදිංචි ශ්‍රී ලාංකික සුබසාධක සමාජයකි.",
     keywords:
-      "සුබසාධක සමිතිය, හාට් ලින්ක් අලයන්ස්, සාමාජික සුබසාධනය, හදිසි ආපදා සහන, ප්‍රජා ව්‍යාපෘති, පරිත්‍යාග, ශ්‍රී ලංකා",
+      "සුබසාධක සමාජය, Heart Link Allianz, සාමාජික සුබසාධනය, හදිසි ආපදා සහන, ප්‍රජා ව්‍යාපෘති, පරිත්‍යාග, ශ්‍රී ලංකා",
   },
 
   nav: {
@@ -112,6 +112,7 @@ const si: Dictionary = {
     showLess: "අඩුවෙන් පෙන්වන්න",
     updated: "යාවත්කාලීන කළේ",
     published: "ප්‍රකාශිත",
+    draft: "කෙටුම්පත",
     category: "වර්ගය",
     total: "එකතුව",
     amount: "මුදල",
@@ -668,6 +669,20 @@ const si: Dictionary = {
     news: "පුවත් ප්‍රකාශනය",
     gallery: "ගැලරි කළමනාකරණය",
     content: "වෙබ් අඩවි අන්තර්ගතය",
+    announcements: "නිවේදන",
+    announcementsHint: "සාමාජික dashboard එකේ පෙනෙන නිවේදන යවන්න.",
+    sendAnnouncement: "සාමාජිකයින්ට නිවේදනයක් යවන්න",
+    sendAnnouncementNote:
+      "“සාමාජිකයින්” හෝ “සියල්ල” audience එක සමඟ ප්‍රකාශිත නිවේදන සාමාජික කලාපයේ වහාම පෙනේ.",
+    publishAnnouncement: "නිවේදනය ප්‍රකාශ කරන්න",
+    sentAnnouncements: "යවන ලද නිවේදන",
+    viewAsMember: "සාමාජික දසුන",
+    audience: "ප්‍රේක්ෂකයින්",
+    audienceMembers: "සාමාජිකයින් පමණි",
+    audienceAll: "සියල්ල (පොදු + සාමාජික)",
+    audienceCommittee: "කමිටුව පමණි",
+    priority: "ප්‍රමුඛතාව",
+    pinAnnouncement: "ඉහළට පින් කරන්න",
     tickets: "සහාය ටිකට්පත්",
     volunteers: "ස්වේච්ඡා සේවකයින්",
     documentsAdmin: "ලේඛන",

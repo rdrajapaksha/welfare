@@ -152,6 +152,7 @@ export function adminNav(d: Dictionary) {
     { label: d.admin.tickets, href: "/admin/tickets", icon: "LifeBuoy" },
     { label: d.admin.volunteers, href: "/admin/volunteers", icon: "HeartHandshake" },
     { label: d.admin.messages, href: "/admin/messages", icon: "Mail" },
+    { label: d.admin.announcements, href: "/admin/announcements", icon: "Megaphone" },
     { label: d.admin.content, href: "/admin/content", icon: "Settings" },
   ];
 }

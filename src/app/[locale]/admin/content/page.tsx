@@ -3,19 +3,16 @@ import { requireAdmin } from "@/lib/auth";
 import { getDictionary, isLocale, pick, type Locale } from "@/i18n";
 import { prisma } from "@/lib/prisma";
 import {
-  adminDeleteAnnouncement,
   adminDeleteDocument,
   adminDeleteFaq,
   adminDeletePartner,
-  adminUpsertAnnouncement,
   adminUpsertDocument,
   adminUpsertFaq,
   adminUpsertPartner,
 } from "@/lib/admin-actions";
-import { formatDateShort } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { DataTable, EmptyState } from "@/components/ui/misc";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Field, Input, Select, Textarea } from "@/components/ui/form";
 import { CheckField } from "@/components/admin/admin-controls";
 import { AdminDeleteButton } from "@/components/admin/delete-button";
@@ -64,8 +61,7 @@ export default async function AdminContentPage({ params }: { params: Promise<{ l
   await requireAdmin(locale);
   const d = await getDictionary(locale);
 
-  const [announcements, faqs, partners, documents] = await Promise.all([
-    prisma.announcement.findMany({ orderBy: { publishedAt: "desc" } }),
+  const [faqs, partners, documents] = await Promise.all([
     prisma.faq.findMany({ orderBy: [{ sortOrder: "asc" }, { category: "asc" }] }),
     prisma.partner.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
     prisma.document.findMany({ orderBy: { publishedAt: "desc" } }),
@@ -80,81 +76,15 @@ export default async function AdminContentPage({ params }: { params: Promise<{ l
         </p>
       </div>
 
-      {/* Announcements */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-extrabold">{d.dashboard.announcements}</h2>
-        <div className="card-surface p-5">
-          <h3 className="font-bold">{d.common.new}</h3>
-          <form
-            action={adminUpsertAnnouncement}
-            className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            <input type="hidden" name="locale" value={locale} />
-            <input type="hidden" name="id" value="" />
-            <Field label={`${d.forms.subject} (EN)`} htmlFor="ann-titleEn" required>
-              <Input id="ann-titleEn" name="titleEn" required />
-            </Field>
-            <Field label={`${d.forms.subject} (SI)`} htmlFor="ann-titleSi">
-              <Input id="ann-titleSi" name="titleSi" />
-            </Field>
-            <Field label={`${d.forms.subject} (TA)`} htmlFor="ann-titleTa">
-              <Input id="ann-titleTa" name="titleTa" />
-            </Field>
-            <Field label={`${d.forms.message} (EN)`} htmlFor="ann-bodyEn" className="sm:col-span-2 lg:col-span-3">
-              <Textarea id="ann-bodyEn" name="bodyEn" rows={3} required />
-            </Field>
-            <Field label="Audience" htmlFor="ann-audience">
-              <Select id="ann-audience" name="audience" defaultValue="ALL">
-                <option value="ALL">{d.common.all}</option>
-                <option value="MEMBERS">{d.nav.members}</option>
-                <option value="COMMITTEE">Committee</option>
-              </Select>
-            </Field>
-            <Field label="Priority" htmlFor="ann-priority">
-              <Select id="ann-priority" name="priority" defaultValue="NORMAL">
-                <option value="NORMAL">Normal</option>
-                <option value="IMPORTANT">Important</option>
-                <option value="URGENT">Urgent</option>
-              </Select>
-            </Field>
-            <div className="flex flex-wrap items-end gap-4 sm:col-span-2 lg:col-span-3">
-              <CheckField name="isPinned" label="Pinned" />
-              <CheckField name="isPublished" label={d.common.published} defaultChecked />
-              <Button type="submit" size="sm">
-                {d.common.save}
-              </Button>
-            </div>
-          </form>
+      {/* Announcements moved to dedicated page */}
+      <section className="card-surface flex flex-wrap items-center justify-between gap-4 p-5">
+        <div>
+          <h2 className="text-lg font-extrabold">{d.admin.announcements}</h2>
+          <p className="mt-1 text-sm text-ink-500">{d.admin.announcementsHint}</p>
         </div>
-        {announcements.length === 0 ? (
-          <EmptyState title={d.dashboard.noAnnouncements} />
-        ) : (
-          <DataTable
-            head={[d.forms.subject, "Audience", d.common.status, d.common.date, d.common.actions]}
-          >
-            {announcements.map((item) => (
-              <tr key={item.id} className="text-ink-800 dark:text-ink-100">
-                <td className="px-4 py-3 font-semibold">{pick(item, "title", locale)}</td>
-                <td className="px-4 py-3">{item.audience}</td>
-                <td className="px-4 py-3">
-                  <Badge tone={item.isPublished ? "success" : "warning"}>
-                    {item.isPinned ? "Pinned · " : ""}
-                    {item.isPublished ? d.common.published : d.common.status}
-                  </Badge>
-                </td>
-                <td className="px-4 py-3">{formatDateShort(item.publishedAt, locale)}</td>
-                <td className="px-4 py-3">
-                  <AdminDeleteButton
-                    action={adminDeleteAnnouncement}
-                    id={item.id}
-                    locale={locale}
-                    label={d.common.delete}
-                  />
-                </td>
-              </tr>
-            ))}
-          </DataTable>
-        )}
+        <ButtonLink href={`/${locale}/admin/announcements`} size="sm">
+          {d.admin.sendAnnouncement}
+        </ButtonLink>
       </section>
 
       {/* FAQs */}
