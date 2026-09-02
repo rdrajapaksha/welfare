@@ -92,6 +92,9 @@
   --animate-marquee: marquee 38s linear infinite;
   --animate-shimmer: shimmer 2.2s linear infinite;
   --animate-float: float 9s ease-in-out infinite;
+  --animate-float-soft: float-soft 7s ease-in-out infinite;
+  --animate-mesh-drift: mesh-drift 18s ease-in-out infinite;
+  --animate-logo-spin: hla-logo-rotate 8s linear infinite;
 }
 
 @keyframes fade-up {
@@ -150,6 +153,49 @@
   }
   50% {
     transform: translateY(-14px) scale(1.03);
+  }
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes mesh-drift {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  50% {
+    opacity: 0.88;
+    transform: scale(1.04) translate3d(-1.5%, 1%, 0);
+  }
+}
+
+@keyframes accent-line {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* Soft continuous spin — logo mark */
+@keyframes hla-logo-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -290,6 +336,12 @@
     radial-gradient(60rem 30rem at 12% -10%, --alpha(var(--color-ink-200) / 55%), transparent 60%),
     radial-gradient(45rem 25rem at 92% 8%, --alpha(var(--color-brand-300) / 28%), transparent 62%),
     radial-gradient(40rem 24rem at 50% 108%, --alpha(var(--color-ink-300) / 35%), transparent 60%);
+  animation: mesh-drift 18s ease-in-out infinite;
+  transform-origin: center;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 }
 
 @utility mesh-ink {
@@ -319,6 +371,30 @@
   .dark & {
     background-color: --alpha(var(--color-ink-900) / 80%);
     border-color: --alpha(#fff / 8%);
+  }
+}
+
+@utility card-interactive {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+    border-color: --alpha(var(--color-brand-400) / 45%);
+  }
+
+  &:active {
+    transform: translateY(-1px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    &:hover {
+      transform: none;
+    }
   }
 }
 
@@ -412,6 +488,60 @@
   opacity: 0;
   transform: translate3d(0, 22px, 0);
   transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility reveal-left {
+  opacity: 0;
+  transform: translate3d(-28px, 0, 0);
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility reveal-right {
+  opacity: 0;
+  transform: translate3d(28px, 0, 0);
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility reveal-scale {
+  opacity: 0;
+  transform: translate3d(0, 12px, 0) scale(0.97);
+  transition:
     opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -423,6 +553,48 @@
   @media (prefers-reduced-motion: reduce) {
     opacity: 1;
     transform: none;
+  }
+}
+
+@utility float-soft {
+  animation: float-soft 7s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@utility accent-underline {
+  position: relative;
+  display: inline-block;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0.08em;
+    width: 100%;
+    height: 0.12em;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--color-brand-600), transparent 85%);
+    transform-origin: left center;
+    animation: accent-line 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@utility link-arrow {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+
+  .group:hover & {
+    transform: translateX(3px);
   }
 }
 

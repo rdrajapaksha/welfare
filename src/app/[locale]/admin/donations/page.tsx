@@ -59,6 +59,15 @@ export default async function AdminDonationsPage({ params }: { params: Promise<{
                       {d.admin.markConfirmed}
                     </Button>
                   </form>
+                ) : row.receiptUrl ? (
+                  <a
+                    href={row.receiptUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-semibold text-brand-700 underline-offset-2 hover:underline"
+                  >
+                    PDF
+                  </a>
                 ) : (
                   "—"
                 )}

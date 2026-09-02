@@ -549,3 +549,116 @@ export async function adminDeleteVolunteer(formData: FormData) {
   await prisma.volunteerApplication.delete({ where: { id } });
   revalidatePath(`/${locale}/admin/volunteers`);
 }
+
+// ---------------------------------------------------------------------------
+// Elections (AGM e-voting)
+// ---------------------------------------------------------------------------
+
+export async function adminUpsertElection(formData: FormData) {
+  const locale = localeOf(formData);
+  await requireAdmin(locale);
+  const id = str(formData, "id");
+  const titleEn = str(formData, "titleEn");
+  if (!titleEn) return;
+
+  const slugBase = str(formData, "slug") || slugify(titleEn);
+  let slug = slugBase;
+  const clash = await prisma.election.findFirst({
+    where: { slug, ...(id ? { NOT: { id } } : {}) },
+    select: { id: true },
+  });
+  if (clash) slug = `${slugBase}-${Date.now().toString(36)}`;
+
+  const opensAt = dateOrNull(formData, "opensAt");
+  const closesAt = dateOrNull(formData, "closesAt");
+
+  const data = {
+    slug,
+    titleEn,
+    titleSi: str(formData, "titleSi") || titleEn,
+    titleTa: str(formData, "titleTa") || titleEn,
+    descriptionEn: str(formData, "descriptionEn"),
+    descriptionSi: str(formData, "descriptionSi") || str(formData, "descriptionEn"),
+    descriptionTa: str(formData, "descriptionTa") || str(formData, "descriptionEn"),
+    status: str(formData, "status") || "DRAFT",
+    ...(opensAt ? { opensAt } : {}),
+    closesAt,
+  };
+
+  if (id) await prisma.election.update({ where: { id }, data });
+  else {
+    await prisma.election.create({
+      data: { ...data, opensAt: opensAt ?? new Date() },
+    });
+  }
+
+  revalidateAdmin(locale, ["/dashboard/vote", "/admin/elections"]);
+  redirect(`/${locale}/admin/elections`);
+}
+
+export async function adminAddCandidate(formData: FormData) {
+  const locale = localeOf(formData);
+  await requireAdmin(locale);
+  const electionId = str(formData, "electionId");
+  const name = str(formData, "name");
+  const positionEn = str(formData, "positionEn");
+  if (!electionId || !name || !positionEn) return;
+
+  await prisma.electionCandidate.create({
+    data: {
+      electionId,
+      name,
+      positionEn,
+      positionSi: str(formData, "positionSi") || positionEn,
+      positionTa: str(formData, "positionTa") || positionEn,
+      bio: str(formData, "bio") || null,
+      sortOrder: intOr(formData, "sortOrder", 0) ?? 0,
+    },
+  });
+
+  revalidateAdmin(locale, ["/dashboard/vote", "/admin/elections"]);
+}
+
+export async function adminDeleteCandidate(formData: FormData) {
+  const locale = localeOf(formData);
+  await requireAdmin(locale);
+  const id = str(formData, "id");
+  if (!id) return;
+  await prisma.electionCandidate.delete({ where: { id } });
+  revalidateAdmin(locale, ["/dashboard/vote", "/admin/elections"]);
+}
+
+export async function adminDeleteElection(formData: FormData) {
+  const locale = localeOf(formData);
+  await requireAdmin(locale);
+  const id = str(formData, "id");
+  if (!id) return;
+  await prisma.election.delete({ where: { id } });
+  revalidateAdmin(locale, ["/dashboard/vote", "/admin/elections"]);
+}
+
+// ---------------------------------------------------------------------------
+// Suggestions
+// ---------------------------------------------------------------------------
+
+export async function adminUpdateSuggestion(formData: FormData) {
+  const locale = localeOf(formData);
+  await requireAdmin(locale);
+  const id = str(formData, "id");
+  const status = str(formData, "status");
+  if (!id || !status) return;
+  await prisma.suggestion.update({
+    where: { id },
+    data: { status, adminNote: str(formData, "adminNote") || null },
+  });
+  revalidatePath(`/${locale}/admin/suggestions`);
+}
+
+export async function adminDeleteSuggestion(formData: FormData) {
+  const locale = localeOf(formData);
+  await requireAdmin(locale);
+  const id = str(formData, "id");
+  if (!id) return;
+  await prisma.suggestion.delete({ where: { id } });
+  revalidatePath(`/${locale}/admin/suggestions`);
+}

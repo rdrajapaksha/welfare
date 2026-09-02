@@ -79,12 +79,12 @@ export default async function ServicesPage({
         ) : (
           <div className="mt-10 grid gap-5 md:grid-cols-2">
             {programmes.map((p, i) => (
-              <Reveal key={p.id} delay={i * 50}>
-                <Link href={`/${locale}/services/${p.slug}`} className="card-surface group flex h-full flex-col overflow-hidden">
+              <Reveal key={p.id} delay={i * 50} variant="scale">
+                <Link href={`/${locale}/services/${p.slug}`} className="card-surface card-interactive group flex h-full flex-col overflow-hidden">
                   <MediaFrame src={p.coverImage ?? "/media/hero-secondary.svg"} alt="" ratio="16/9" imgClassName="group-hover:scale-105" />
                   <div className="flex flex-1 flex-col p-6">
                     <Badge>{programmeCategoryLabel(d, p.category)}</Badge>
-                    <h2 className="mt-3 text-xl font-extrabold text-ink-950 group-hover:text-brand-700 dark:text-white">
+                    <h2 className="mt-3 text-xl font-extrabold text-ink-950 transition-colors duration-300 group-hover:text-brand-700 dark:text-white">
                       {pick(p, "title", locale)}
                     </h2>
                     <p className="mt-2 flex-1 text-sm text-ink-600 dark:text-ink-300">{pick(p, "summary", locale)}</p>
@@ -95,7 +95,7 @@ export default async function ServicesPage({
                     )}
                     <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-brand-700">
                       {d.common.readMore}
-                      <ArrowRight className="size-4" />
+                      <ArrowRight className="link-arrow size-4" />
                     </span>
                   </div>
                 </Link>

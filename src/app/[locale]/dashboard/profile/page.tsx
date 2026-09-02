@@ -54,6 +54,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ locale
           <p className="mt-1 font-extrabold">{formatDate(member.joinedAt, locale)}</p>
         </div>
       </div>
+
       <dl className="card-surface grid gap-4 p-5 sm:grid-cols-2">
         <div>
           <dt className="text-xs font-bold tracking-wider text-ink-500 uppercase">{d.forms.fullName}</dt>

@@ -68,6 +68,18 @@ export const volunteerSchema = z.object({
   consent: z.literal(true),
 });
 
+export const suggestionSchema = z.object({
+  category: z.enum(["SUGGESTION", "GRIEVANCE", "IDEA"]).default("SUGGESTION"),
+  subject: z.string().trim().min(3).max(140),
+  body: z.string().trim().min(10).max(4000),
+  isAnonymous: z.boolean().default(false),
+});
+
+export const voteSchema = z.object({
+  electionId: z.string().min(1),
+  candidateId: z.string().min(1),
+});
+
 export const donationSchema = z.object({
   amount: z.coerce.number().int().min(100).max(10_000_000),
   purpose: z.enum(DONATION_PURPOSES).default("GENERAL"),

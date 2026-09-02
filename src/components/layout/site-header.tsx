@@ -131,14 +131,16 @@ export function SiteHeader({
         <div className="container-page flex items-center gap-2.5 py-2">
           <Link href={href("/")} className="group flex min-w-0 flex-1 items-center gap-2.5">
             <span className="anim-enter flex shrink-0 flex-col items-center gap-0.5">
-              <Image
-                src="/logo.png"
-                alt={labels.brandFull}
-                width={44}
-                height={44}
-                priority
-                className="logo-hover size-9 object-contain group-hover:scale-[1.04] sm:size-10"
-              />
+              <span className="inline-flex animate-logo-spin">
+                <Image
+                  src="/logo.png"
+                  alt={labels.brandFull}
+                  width={44}
+                  height={44}
+                  priority
+                  className="size-9 object-contain sm:size-10"
+                />
+              </span>
               <span className="anim-fade anim-delay-2 font-times max-w-[8.5rem] text-center text-[0.62rem] leading-snug text-ink-800 italic sm:max-w-[9.5rem] sm:text-[0.7rem] dark:text-ink-200">
                 {labels.brandTagline}
               </span>
@@ -234,13 +236,15 @@ export function SiteHeader({
             <div className="flex min-h-18 shrink-0 items-center justify-between gap-3 border-b border-ink-200 px-5 py-3 dark:border-white/10">
               <div className="flex min-w-0 items-center gap-2.5">
                 <span className="flex shrink-0 flex-col items-center gap-1">
-                  <Image
-                    src="/logo.png"
-                    alt={labels.brandFull}
-                    width={40}
-                    height={40}
-                    className="size-10 object-contain"
-                  />
+                  <span className="inline-flex animate-logo-spin">
+                    <Image
+                      src="/logo.png"
+                      alt={labels.brandFull}
+                      width={40}
+                      height={40}
+                      className="size-10 object-contain"
+                    />
+                  </span>
                   <span className="font-times max-w-[8rem] text-center text-[0.7rem] leading-snug text-ink-700 italic dark:text-ink-200">
                     {labels.brandTagline}
                   </span>

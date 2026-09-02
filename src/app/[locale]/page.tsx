@@ -83,7 +83,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </p>
             <h1 className="anim-enter-slow anim-delay-1 mt-6 text-4xl font-extrabold tracking-tight sm:text-6xl lg:text-[4.1rem] lg:leading-[1.05]">
               {d.home.heroTitle}{" "}
-              <span className="text-gradient-brand">{d.home.heroTitleAccent}</span>
+              <span className="text-gradient-brand accent-underline">{d.home.heroTitleAccent}</span>
             </h1>
             <p className="anim-enter anim-delay-2 mt-6 max-w-xl text-lg leading-relaxed text-ink-600 dark:text-ink-300">
               {d.home.heroSubtitle}
@@ -91,7 +91,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <div className="anim-enter anim-delay-3 mt-8 flex flex-wrap gap-3">
               <ButtonLink href={href("/donations")} size="lg" variant="donate" className="group">
                 {d.home.heroPrimaryCta}
-                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                <ArrowRight className="link-arrow size-4" />
               </ButtonLink>
               <ButtonLink href={href("/join")} variant="outline" size="lg">
                 {d.home.heroSecondaryCta}
@@ -110,8 +110,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               priority
               className="shadow-lift"
               sizes="(max-width: 1024px) 100vw, 50vw"
+              imgClassName="hover:scale-[1.03]"
             />
-            <div className="absolute -bottom-6 left-4 max-w-xs rounded-2xl bg-white p-4 shadow-lift dark:bg-ink-900 sm:left-8">
+            <div className="float-soft absolute -bottom-6 left-4 max-w-xs rounded-2xl bg-white p-4 shadow-lift dark:bg-ink-900 sm:left-8">
               <p className="text-xs font-bold tracking-wider text-brand-700 uppercase">{d.transparency.ratioTitle}</p>
               <p className="mt-1 text-2xl font-extrabold text-ink-950 dark:text-white">{directPct}¢</p>
               <p className="text-xs text-ink-500">{d.transparency.ratioText}</p>
@@ -121,12 +122,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       <Section>
-        <SectionHeading
-          eyebrow={d.home.statsTitle}
-          title={d.home.statsTitle}
-          subtitle={d.home.statsSubtitle}
-          align="center"
-        />
+        <Reveal>
+          <SectionHeading
+            eyebrow={d.home.statsTitle}
+            title={d.home.statsTitle}
+            subtitle={d.home.statsSubtitle}
+            align="center"
+          />
+        </Reveal>
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
             { label: d.home.statMembers, value: Math.max(memberCount, siteConfig.impact.members), format: "number" as const },
@@ -135,23 +138,25 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             { label: d.home.statProjects, value: siteConfig.impact.projects, format: "number" as const },
             { label: d.home.statVolunteers, value: siteConfig.impact.volunteers, format: "number" as const },
             { label: d.home.statYears, value: new Date().getFullYear() - siteConfig.foundedYear, format: "number" as const, suffix: "+" },
-          ].map((stat) => (
-            <div key={stat.label} className="card-surface p-6">
-              <p className="text-sm font-semibold text-ink-500">{stat.label}</p>
-              <p className="mt-3 text-3xl font-extrabold text-ink-950 dark:text-white">
-                <Counter value={stat.value} locale={locale} format={stat.format} suffix={stat.suffix} />
-              </p>
-            </div>
+          ].map((stat, i) => (
+            <Reveal key={stat.label} delay={i * 70} variant="scale">
+              <div className="card-surface card-interactive p-6">
+                <p className="text-sm font-semibold text-ink-500">{stat.label}</p>
+                <p className="mt-3 text-3xl font-extrabold text-ink-950 dark:text-white">
+                  <Counter value={stat.value} locale={locale} format={stat.format} suffix={stat.suffix} />
+                </p>
+              </div>
+            </Reveal>
           ))}
         </div>
       </Section>
 
       <Section tone="alt">
         <div className="grid items-center gap-12 lg:grid-cols-2">
-          <Reveal>
-            <MediaFrame src="/media/about-team.svg" alt="" ratio="4/3" />
+          <Reveal variant="left">
+            <MediaFrame src="/media/about-team.svg" alt="" ratio="4/3" imgClassName="hover:scale-[1.03]" />
           </Reveal>
-          <Reveal delay={80}>
+          <Reveal delay={100} variant="right">
             <Eyebrow>{d.home.aboutEyebrow}</Eyebrow>
             <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">{d.home.aboutTitle}</h2>
             <p className="mt-4 text-ink-600 dark:text-ink-300">{d.home.aboutText}</p>
@@ -163,40 +168,50 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 </li>
               ))}
             </ul>
-            <ButtonLink href={href("/about")} variant="outline" className="mt-8">
+            <ButtonLink href={href("/about")} variant="outline" className="group mt-8">
               {d.home.aboutCta}
-              <ArrowRight className="size-4" />
+              <ArrowRight className="link-arrow size-4" />
             </ButtonLink>
           </Reveal>
         </div>
       </Section>
 
       <Section>
-        <SectionHeading
-          eyebrow={d.home.servicesEyebrow}
-          title={d.home.servicesTitle}
-          subtitle={d.home.servicesSubtitle}
-          action={
-            <ButtonLink href={href("/services")} variant="ghost">
-              {d.home.servicesCta}
-              <ArrowRight className="size-4" />
-            </ButtonLink>
-          }
-        />
+        <Reveal>
+          <SectionHeading
+            eyebrow={d.home.servicesEyebrow}
+            title={d.home.servicesTitle}
+            subtitle={d.home.servicesSubtitle}
+            action={
+              <ButtonLink href={href("/services")} variant="ghost" className="group">
+                {d.home.servicesCta}
+                <ArrowRight className="link-arrow size-4" />
+              </ButtonLink>
+            }
+          />
+        </Reveal>
         <div className="mt-10 grid gap-5 md:grid-cols-2">
           {programmes.map((p, i) => (
-            <Reveal key={p.id} delay={i * 60}>
-              <Link href={href(`/services/${p.slug}`)} className="card-surface group flex h-full flex-col overflow-hidden">
-                <MediaFrame src={p.coverImage ?? "/media/hero-secondary.svg"} alt="" ratio="16/9" imgClassName="group-hover:scale-105" />
+            <Reveal key={p.id} delay={i * 70} variant="scale">
+              <Link
+                href={href(`/services/${p.slug}`)}
+                className="card-surface card-interactive group flex h-full flex-col overflow-hidden"
+              >
+                <MediaFrame
+                  src={p.coverImage ?? "/media/hero-secondary.svg"}
+                  alt=""
+                  ratio="16/9"
+                  imgClassName="group-hover:scale-105"
+                />
                 <div className="flex flex-1 flex-col p-6">
                   <Badge>{programmeCategoryLabel(d, p.category)}</Badge>
-                  <h3 className="mt-3 text-xl font-extrabold text-ink-950 group-hover:text-brand-700 dark:text-white">
+                  <h3 className="mt-3 text-xl font-extrabold text-ink-950 transition-colors duration-300 group-hover:text-brand-700 dark:text-white">
                     {pick(p, "title", locale)}
                   </h3>
                   <p className="mt-2 flex-1 text-sm text-ink-600 dark:text-ink-300">{pick(p, "summary", locale)}</p>
                   <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-brand-700">
                     {d.common.readMore}
-                    <ArrowRight className="size-4" />
+                    <ArrowRight className="link-arrow size-4" />
                   </span>
                 </div>
               </Link>
@@ -206,60 +221,73 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </Section>
 
       <Section tone="alt">
-        <SectionHeading
-          eyebrow={d.home.projectsEyebrow}
-          title={d.home.projectsTitle}
-          subtitle={d.home.projectsSubtitle}
-          action={
-            <ButtonLink href={href("/projects")} variant="ghost">
-              {d.common.viewAll}
-              <ArrowRight className="size-4" />
-            </ButtonLink>
-          }
-        />
+        <Reveal>
+          <SectionHeading
+            eyebrow={d.home.projectsEyebrow}
+            title={d.home.projectsTitle}
+            subtitle={d.home.projectsSubtitle}
+            action={
+              <ButtonLink href={href("/projects")} variant="ghost" className="group">
+                {d.common.viewAll}
+                <ArrowRight className="link-arrow size-4" />
+              </ButtonLink>
+            }
+          />
+        </Reveal>
         <div className="mt-10 grid gap-5 lg:grid-cols-3">
-          {projects.map((p) => (
-            <Link key={p.id} href={href(`/projects/${p.slug}`)} className="card-surface group p-5">
-              <MediaFrame src={p.coverImage ?? "/media/housing-project.svg"} alt="" ratio="16/9" className="mb-4" imgClassName="group-hover:scale-105" />
-              <h3 className="text-lg font-extrabold text-ink-950 dark:text-white">{pick(p, "title", locale)}</h3>
-              <p className="mt-1 text-sm text-ink-500">{p.location}</p>
-              <Progress value={p.raisedAmount} total={p.targetAmount} className="mt-4" showLabel />
-              <p className="mt-2 text-xs text-ink-500">
-                {d.projects.raised} {formatCurrency(p.raisedAmount, locale)} · {d.projects.target}{" "}
-                {formatCurrency(p.targetAmount, locale)}
-              </p>
-            </Link>
+          {projects.map((p, i) => (
+            <Reveal key={p.id} delay={i * 80} variant="scale">
+              <Link href={href(`/projects/${p.slug}`)} className="card-surface card-interactive group p-5">
+                <MediaFrame
+                  src={p.coverImage ?? "/media/housing-project.svg"}
+                  alt=""
+                  ratio="16/9"
+                  className="mb-4"
+                  imgClassName="group-hover:scale-105"
+                />
+                <h3 className="text-lg font-extrabold text-ink-950 transition-colors duration-300 group-hover:text-brand-700 dark:text-white">
+                  {pick(p, "title", locale)}
+                </h3>
+                <p className="mt-1 text-sm text-ink-500">{p.location}</p>
+                <Progress value={p.raisedAmount} total={p.targetAmount} className="mt-4" showLabel />
+                <p className="mt-2 text-xs text-ink-500">
+                  {d.projects.raised} {formatCurrency(p.raisedAmount, locale)} · {d.projects.target}{" "}
+                  {formatCurrency(p.targetAmount, locale)}
+                </p>
+              </Link>
+            </Reveal>
           ))}
         </div>
       </Section>
 
       <section className="bg-ink-950 text-white">
         <div className="container-page section-y grid items-center gap-10 lg:grid-cols-2">
-          <div>
+          <Reveal variant="left">
             <Eyebrow tone="light">{d.home.transparencyEyebrow}</Eyebrow>
             <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">{d.home.transparencyTitle}</h2>
             <p className="mt-4 text-ink-200">{d.home.transparencySubtitle}</p>
-            <ButtonLink href={href("/transparency")} variant="gold" className="mt-8">
+            <ButtonLink href={href("/transparency")} variant="gold" className="group mt-8">
               {d.home.transparencyCta}
-              <ArrowRight className="size-4" />
+              <ArrowRight className="link-arrow size-4" />
             </ButtonLink>
-          </div>
+          </Reveal>
           {report && (
             <div className="grid gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                <p className="text-xs font-bold tracking-wider text-ink-300 uppercase">{d.home.transparencyIncome}</p>
-                <p className="mt-2 text-2xl font-extrabold">{formatCurrency(report.totalIncome, locale, true)}</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                <p className="text-xs font-bold tracking-wider text-ink-300 uppercase">{d.home.transparencySpend}</p>
-                <p className="mt-2 text-2xl font-extrabold">
-                  {formatCurrency(report.welfareSpend + report.projectSpend, locale, true)}
-                </p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                <p className="text-xs font-bold tracking-wider text-ink-300 uppercase">{d.home.transparencyAdmin}</p>
-                <p className="mt-2 text-2xl font-extrabold">{adminPct}%</p>
-              </div>
+              {[
+                { label: d.home.transparencyIncome, value: formatCurrency(report.totalIncome, locale, true) },
+                {
+                  label: d.home.transparencySpend,
+                  value: formatCurrency(report.welfareSpend + report.projectSpend, locale, true),
+                },
+                { label: d.home.transparencyAdmin, value: `${adminPct}%` },
+              ].map((item, i) => (
+                <Reveal key={item.label} delay={i * 90} variant="scale">
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-5 transition duration-300 hover:-translate-y-1 hover:border-brand-400/40 hover:bg-white/8">
+                    <p className="text-xs font-bold tracking-wider text-ink-300 uppercase">{item.label}</p>
+                    <p className="mt-2 text-2xl font-extrabold">{item.value}</p>
+                  </div>
+                </Reveal>
+              ))}
             </div>
           )}
         </div>
@@ -293,86 +321,102 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       <Section tone="alt">
         <div className="grid gap-12 lg:grid-cols-2">
-          <div>
+          <Reveal variant="left">
             <SectionHeading eyebrow={d.home.newsEyebrow} title={d.home.newsTitle} subtitle={d.home.newsSubtitle} />
             <ul className="mt-8 space-y-4">
-              {news.map((post) => (
+              {news.map((post, i) => (
                 <li key={post.id}>
-                  <Link href={href(`/news/${post.slug}`)} className="card-surface group flex gap-4 p-4">
-                    <Image src={post.coverImage ?? "/media/annual-report.svg"} alt="" width={120} height={80} className="size-20 rounded-xl object-cover" />
-                    <div className="min-w-0">
-                      <p className="text-xs text-ink-500">{formatDateShort(post.publishedAt, locale)}</p>
-                      <p className="mt-1 font-bold text-ink-950 group-hover:text-brand-700 dark:text-white">
-                        {pick(post, "title", locale)}
-                      </p>
-                    </div>
-                  </Link>
+                  <Reveal delay={i * 60}>
+                    <Link href={href(`/news/${post.slug}`)} className="card-surface card-interactive group flex gap-4 p-4">
+                      <Image
+                        src={post.coverImage ?? "/media/annual-report.svg"}
+                        alt=""
+                        width={120}
+                        height={80}
+                        className="size-20 rounded-xl object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-xs text-ink-500">{formatDateShort(post.publishedAt, locale)}</p>
+                        <p className="mt-1 font-bold text-ink-950 transition-colors duration-300 group-hover:text-brand-700 dark:text-white">
+                          {pick(post, "title", locale)}
+                        </p>
+                      </div>
+                    </Link>
+                  </Reveal>
                 </li>
               ))}
             </ul>
-          </div>
-          <div>
+          </Reveal>
+          <Reveal delay={80} variant="right">
             <SectionHeading eyebrow={d.home.eventsEyebrow} title={d.home.eventsTitle} subtitle={d.home.eventsSubtitle} />
             <ul className="mt-8 space-y-4">
-              {events.map((event) => (
+              {events.map((event, i) => (
                 <li key={event.id}>
-                  <Link href={href(`/events/${event.slug}`)} className="card-surface flex gap-4 p-4">
-                    <div className="grid size-16 shrink-0 place-items-center rounded-2xl bg-brand-50 text-center dark:bg-brand-500/15">
-                      <CalendarDays className="size-5 text-brand-700" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-ink-500">{formatDateShort(event.startsAt, locale)}</p>
-                      <p className="mt-1 font-bold text-ink-950 dark:text-white">{pick(event, "title", locale)}</p>
-                      <p className="text-sm text-ink-500">{event.venue}</p>
-                    </div>
-                  </Link>
+                  <Reveal delay={i * 60}>
+                    <Link href={href(`/events/${event.slug}`)} className="card-surface card-interactive flex gap-4 p-4">
+                      <div className="grid size-16 shrink-0 place-items-center rounded-2xl bg-brand-50 text-center transition duration-300 group-hover:bg-brand-100 dark:bg-brand-500/15">
+                        <CalendarDays className="size-5 text-brand-700" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-ink-500">{formatDateShort(event.startsAt, locale)}</p>
+                        <p className="mt-1 font-bold text-ink-950 dark:text-white">{pick(event, "title", locale)}</p>
+                        <p className="text-sm text-ink-500">{event.venue}</p>
+                      </div>
+                    </Link>
+                  </Reveal>
                 </li>
               ))}
             </ul>
-          </div>
+          </Reveal>
         </div>
       </Section>
 
       <Section>
-        <SectionHeading
-          title={d.home.faqTitle}
-          subtitle={d.home.faqSubtitle}
-          action={
-            <ButtonLink href={href("/faq")} variant="ghost">
-              {d.home.faqCta}
-              <ArrowRight className="size-4" />
-            </ButtonLink>
-          }
-        />
-        <div className="mx-auto mt-8 max-w-3xl">
-          <Accordion
-            items={faqs.map((f) => ({
-              id: f.id,
-              question: pick(f, "question", locale),
-              answer: pick(f, "answer", locale),
-            }))}
+        <Reveal>
+          <SectionHeading
+            title={d.home.faqTitle}
+            subtitle={d.home.faqSubtitle}
+            action={
+              <ButtonLink href={href("/faq")} variant="ghost" className="group">
+                {d.home.faqCta}
+                <ArrowRight className="link-arrow size-4" />
+              </ButtonLink>
+            }
           />
-        </div>
+        </Reveal>
+        <Reveal delay={100}>
+          <div className="mx-auto mt-8 max-w-3xl">
+            <Accordion
+              items={faqs.map((f) => ({
+                id: f.id,
+                question: pick(f, "question", locale),
+                answer: pick(f, "answer", locale),
+              }))}
+            />
+          </div>
+        </Reveal>
       </Section>
 
       <section className="relative overflow-hidden bg-ink-950 text-white">
         <div aria-hidden className="pointer-events-none absolute inset-0 opacity-45 mesh-ink" />
         <div className="container-page relative section-y text-center">
-          <Users className="mx-auto size-10 opacity-80" />
-          <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">{d.home.ctaTitle}</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-ink-200">{d.home.ctaText}</p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <ButtonLink href={href("/donations")} variant="donate">
-              <HeartHandshake className="size-4" />
-              {d.home.ctaDonate}
-            </ButtonLink>
-            <ButtonLink href={href("/join")} variant="outline" className="border-white/30 text-white hover:bg-white/10">
-              {d.home.ctaJoin}
-            </ButtonLink>
-            <ButtonLink href={href("/volunteer")} variant="ghost" className="text-white hover:bg-white/10">
-              {d.home.ctaVolunteer}
-            </ButtonLink>
-          </div>
+          <Reveal variant="scale">
+            <Users className="mx-auto size-10 opacity-80" />
+            <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">{d.home.ctaTitle}</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-ink-200">{d.home.ctaText}</p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <ButtonLink href={href("/donations")} variant="donate" className="group">
+                <HeartHandshake className="size-4 transition-transform duration-300 group-hover:scale-110" />
+                {d.home.ctaDonate}
+              </ButtonLink>
+              <ButtonLink href={href("/join")} variant="outline" className="border-white/30 text-white hover:bg-white/10">
+                {d.home.ctaJoin}
+              </ButtonLink>
+              <ButtonLink href={href("/volunteer")} variant="ghost" className="text-white hover:bg-white/10">
+                {d.home.ctaVolunteer}
+              </ButtonLink>
+            </div>
+          </Reveal>
         </div>
       </section>
     </>

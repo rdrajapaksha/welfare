@@ -35,6 +35,10 @@ async function main() {
   await prisma.supportTicket.deleteMany();
   await prisma.benefitClaim.deleteMany();
   await prisma.eventRegistration.deleteMany();
+  await prisma.electionVote.deleteMany();
+  await prisma.electionCandidate.deleteMany();
+  await prisma.election.deleteMany();
+  await prisma.suggestion.deleteMany();
   await prisma.galleryItem.deleteMany();
   await prisma.galleryAlbum.deleteMany();
   await prisma.fundAllocation.deleteMany();
@@ -670,6 +674,62 @@ async function main() {
 
   await prisma.subscriber.create({
     data: { email: "news@example.lk", locale: "en", isConfirmed: true },
+  });
+
+  const election = await prisma.election.create({
+    data: {
+      slug: "agm-2026-office-bearers",
+      titleEn: "AGM 2026 — Office Bearers",
+      titleSi: "2026 මහා සභාව — නිලධාරී මණ්ඩලය",
+      titleTa: "AGM 2026 — அலுவலர் குழு",
+      descriptionEn: "Confidential e-vote for the 2026–2028 committee. One vote per active member.",
+      descriptionSi: "2026–2028 කමිටුව සඳහා රහසිගත ඊ-ඡන්දය. ක්‍රියාකාරී සාමාජිකයෙකුට එක් ඡන්දයක්.",
+      descriptionTa: "2026–2028 குழுவுக்கான ரகசிய மின் வாக்களிப்பு. செயலில் உள்ள உறுப்பினருக்கு ஒரு வாக்கு.",
+      status: "OPEN",
+      opensAt: daysAgo(2),
+      closesAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 21),
+      candidates: {
+        create: [
+          {
+            name: "Nimal Perera",
+            positionEn: "President",
+            positionSi: "සභාපති",
+            positionTa: "தலைவர்",
+            bio: "Committee member since 2018",
+            sortOrder: 1,
+          },
+          {
+            name: "Shanthi Fernando",
+            positionEn: "President",
+            positionSi: "සභාපති",
+            positionTa: "தலைவர்",
+            bio: "Welfare lead, Eastern Province",
+            sortOrder: 2,
+          },
+          {
+            name: "Ravi Jayasuriya",
+            positionEn: "Secretary",
+            positionSi: "ලේකම්",
+            positionTa: "செயலாளர்",
+            bio: "Former treasurer",
+            sortOrder: 3,
+          },
+        ],
+      },
+    },
+  });
+  void election;
+
+  await prisma.suggestion.create({
+    data: {
+      reference: "SUG-2026-001",
+      memberId: demoMember.id,
+      isAnonymous: false,
+      category: "IDEA",
+      subject: "Evening welfare clinic once a month",
+      body: "Many working members cannot attend weekday morning clinics. A Saturday evening session would help.",
+      status: "NEW",
+    },
   });
 
   console.log("Seed complete.");

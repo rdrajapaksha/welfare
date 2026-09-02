@@ -49,7 +49,7 @@ export function MediaFrame({
         fill
         sizes={sizes}
         priority={priority}
-        className={cn("object-cover transition-transform duration-700", imgClassName)}
+        className={cn("object-cover transition-transform duration-700 ease-out", imgClassName)}
       />
       {overlay && (
         <div

@@ -70,6 +70,8 @@ model Member {
   benefitClaims      BenefitClaim[]
   tickets            SupportTicket[]
   eventRegistrations EventRegistration[]
+  votes              ElectionVote[]
+  suggestions        Suggestion[]
 
   @@index([status])
   @@index([district])
@@ -591,4 +593,77 @@ model Subscriber {
   isConfirmed  Boolean   @default(false)
   createdAt    DateTime  @default(now())
   unsubscribedAt DateTime?
+}
+
+// ---------------------------------------------------------------------------
+// Engagement: e-voting, suggestions
+// ---------------------------------------------------------------------------
+
+model Election {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  titleEn     String
+  titleSi     String
+  titleTa     String
+  descriptionEn String  @default("")
+  descriptionSi String  @default("")
+  descriptionTa String  @default("")
+  status      String    @default("DRAFT") // DRAFT | OPEN | CLOSED
+  opensAt     DateTime  @default(now())
+  closesAt    DateTime?
+  createdAt   DateTime  @default(now())
+
+  candidates ElectionCandidate[]
+  votes      ElectionVote[]
+
+  @@index([status, opensAt])
+}
+
+model ElectionCandidate {
+  id          String @id @default(cuid())
+  electionId  String
+  name        String
+  positionEn  String
+  positionSi  String
+  positionTa  String
+  bio         String?
+  sortOrder   Int    @default(0)
+
+  election Election       @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  votes    ElectionVote[]
+
+  @@index([electionId, sortOrder])
+}
+
+model ElectionVote {
+  id          String   @id @default(cuid())
+  electionId  String
+  candidateId String
+  memberId    String
+  createdAt   DateTime @default(now())
+
+  election  Election          @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  candidate ElectionCandidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  member    Member            @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([electionId, memberId])
+  @@index([electionId, candidateId])
+}
+
+model Suggestion {
+  id           String   @id @default(cuid())
+  reference    String   @unique
+  memberId     String?
+  isAnonymous  Boolean  @default(false)
+  category     String   @default("SUGGESTION") // SUGGESTION | GRIEVANCE | IDEA
+  subject      String
+  body         String
+  status       String   @default("NEW") // NEW | REVIEWING | DONE | ARCHIVED
+  adminNote    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  member Member? @relation(fields: [memberId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
 }

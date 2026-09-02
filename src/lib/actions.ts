@@ -15,9 +15,11 @@ import {
   joinSchema,
   loginSchema,
   profileSchema,
+  suggestionSchema,
   ticketReplySchema,
   ticketSchema,
   volunteerSchema,
+  voteSchema,
 } from "./validations";
 
 export type ActionState = {
@@ -184,6 +186,11 @@ export async function donateAction(_prev: ActionState, formData: FormData): Prom
       memberId: user?.memberId ?? null,
     },
   });
+
+  if (created.status === "CONFIRMED") {
+    const { generateDonationReceiptPdf } = await import("./receipt");
+    await generateDonationReceiptPdf(created.id);
+  }
 
   return { ok: true, reference: created.reference };
 }
@@ -367,6 +374,8 @@ export async function adminConfirmDonation(formData: FormData) {
     where: { id },
     data: { status: "CONFIRMED", confirmedAt: new Date() },
   });
+  const { generateDonationReceiptPdf } = await import("./receipt");
+  await generateDonationReceiptPdf(id);
   revalidatePath(`/${locale}/admin/donations`);
 }
 
@@ -427,4 +436,66 @@ export async function adminVolunteerStatus(formData: FormData) {
     data: { status, reviewedAt: new Date() },
   });
   revalidatePath(`/${locale}/admin/volunteers`);
+}
+
+export async function submitSuggestionAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const user = await getCurrentUser();
+  if (!user?.memberId) return fail("loginRequired");
+
+  const raw = formDataToObject(formData);
+  raw.isAnonymous = formData.get("isAnonymous") === "on";
+  const parsed = suggestionSchema.safeParse(raw);
+  if (!parsed.success) return zodFail(parsed.error);
+
+  const created = await prisma.suggestion.create({
+    data: {
+      reference: generateReference("SUG"),
+      memberId: parsed.data.isAnonymous ? null : user.memberId,
+      isAnonymous: parsed.data.isAnonymous,
+      category: parsed.data.category,
+      subject: parsed.data.subject,
+      body: parsed.data.body,
+    },
+  });
+
+  revalidatePath("/dashboard/suggestions");
+  revalidatePath("/admin/suggestions");
+  return { ok: true, reference: created.reference };
+}
+
+export async function castVoteAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const user = await getCurrentUser();
+  if (!user?.memberId) return fail("loginRequired");
+
+  const parsed = voteSchema.safeParse(formDataToObject(formData));
+  if (!parsed.success) return zodFail(parsed.error);
+
+  const election = await prisma.election.findUnique({
+    where: { id: parsed.data.electionId },
+    include: { candidates: { select: { id: true } } },
+  });
+  if (!election || election.status !== "OPEN") return fail("submitFailed");
+  if (election.closesAt && election.closesAt < new Date()) return fail("submitFailed");
+  if (!election.candidates.some((c) => c.id === parsed.data.candidateId)) return fail("submitFailed");
+
+  const existing = await prisma.electionVote.findUnique({
+    where: {
+      electionId_memberId: { electionId: election.id, memberId: user.memberId },
+    },
+  });
+  if (existing) return fail("alreadyVoted");
+
+  await prisma.electionVote.create({
+    data: {
+      electionId: election.id,
+      candidateId: parsed.data.candidateId,
+      memberId: user.memberId,
+    },
+  });
+
+  revalidatePath("/dashboard/vote");
+  return { ok: true };
 }

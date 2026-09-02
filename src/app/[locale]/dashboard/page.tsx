@@ -6,8 +6,9 @@ import { prisma } from "@/lib/prisma";
 import { formatCurrency, formatDateShort } from "@/lib/utils";
 import { Badge, statusTone } from "@/components/ui/badge";
 import { StatCard } from "@/components/ui/misc";
-import { claimStatusLabel, ticketStatusLabel } from "@/lib/labels";
+import { memberStatusLabel, membershipTypeLabel, claimStatusLabel, ticketStatusLabel } from "@/lib/labels";
 import { ButtonLink } from "@/components/ui/button";
+import { DigitalMemberIdCard } from "@/components/member/digital-id-card";
 
 export default async function DashboardHome({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
@@ -49,16 +50,30 @@ export default async function DashboardHome({ params }: { params: Promise<{ loca
         <StatCard label={d.dashboard.tickets} value={member?.tickets.length ?? 0} tone="gold" />
       </div>
       <div className="flex flex-wrap gap-2">
-        <ButtonLink href={`/${locale}/dashboard/benefits`} size="sm">
+        <ButtonLink href={`/${locale}/dashboard/id`} size="sm">
+          {d.dashboard.digitalId}
+        </ButtonLink>
+        <ButtonLink href={`/${locale}/dashboard/benefits`} size="sm" variant="outline">
           {d.dashboard.newClaim}
         </ButtonLink>
-        <ButtonLink href={`/${locale}/dashboard/tickets`} variant="outline" size="sm">
-          {d.dashboard.newTicket}
+        <ButtonLink href={`/${locale}/dashboard/vote`} variant="outline" size="sm">
+          {d.dashboard.eVoting}
         </ButtonLink>
-        <ButtonLink href={`/${locale}/dashboard/documents`} variant="outline" size="sm">
-          {d.dashboard.documents}
+        <ButtonLink href={`/${locale}/dashboard/suggestions`} variant="outline" size="sm">
+          {d.dashboard.suggestions}
         </ButtonLink>
       </div>
+
+      {member && (
+        <DigitalMemberIdCard
+          d={d}
+          locale={locale}
+          member={member}
+          membershipTypeLabel={membershipTypeLabel(d, member.membershipType)}
+          statusLabel={memberStatusLabel(d, member.status)}
+        />
+      )}
+
       <section>
         <h2 className="text-lg font-extrabold">{d.dashboard.myClaims}</h2>
         <ul className="mt-3 divide-y divide-ink-100 overflow-hidden rounded-2xl border border-ink-200 bg-white dark:divide-white/8 dark:border-white/10 dark:bg-ink-900/40">
